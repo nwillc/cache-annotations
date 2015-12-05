@@ -1,8 +1,25 @@
+buildscript {
+    repositories {
+        jcenter {
+            url 'http://jcenter.bintray.com'
+        }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "gradle.plugin.com.github.nwillc:vplugin:1.2.4"
+    }
+}
 
 apply plugin: 'java'
+apply plugin: 'com.github.nwillc.vplugin'
+apply plugin: 'application'
 
 repositories {
-    jcenter()
+    jcenter {
+        url 'http://jcenter.bintray.com'
+    }
 }
 
 dependencies {
