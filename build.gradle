@@ -22,15 +22,23 @@ buildscript {
         maven {
             url "https://plugins.gradle.org/m2/"
         }
+        maven {
+            url "https://maven.eveoh.nl/content/repositories/releases"
+        }
     }
     dependencies {
-        classpath "gradle.plugin.com.github.nwillc:vplugin:1.2.4"
+        classpath "gradle.plugin.com.github.nwillc:vplugin:1.2.4",
+                "nl.eveoh:gradle-aspectj:1.6"
     }
+}
+
+project.ext {
+    aspectjVersion = '1.8.7'
 }
 
 apply plugin: 'java'
 apply plugin: 'com.github.nwillc.vplugin'
-apply plugin: 'application'
+apply plugin: 'aspectj'
 
 repositories {
     jcenter {
@@ -39,7 +47,8 @@ repositories {
 }
 
 dependencies {
-    compile 'org.slf4j:slf4j-api:1.7.12'
+    compile 'org.slf4j:slf4j-api:1.7.13',
+            'org.aspectj:aspectjrt:1.8.7'
 
     testCompile 'junit:junit:4.12'
 }
