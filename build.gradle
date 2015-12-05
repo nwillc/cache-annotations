@@ -27,3 +27,8 @@ dependencies {
 
     testCompile 'junit:junit:4.12'
 }
+
+group = "com.github.nwillc"
+version = "1.0.1"
+targetCompatibility = "1.8"
+sourceCompatibility = "1.8"
