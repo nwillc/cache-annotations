@@ -14,10 +14,24 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.github.nwillc.cache.annotations;
+package com.github.nwillc.cache.annotation;
 
-import org.aspectj.lang.annotation.Aspect;
 
-@Aspect
-public class CacheDefaultsAspect {
+import com.github.nwillc.contracts.UtilityClassContract;
+import org.junit.Test;
+
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+public class UtilsTest extends UtilityClassContract {
+	@Override
+	public Class<?> getClassToTest() {
+		return Utils.class;
+	}
+
+	@Test
+	public void shouldReturnNoCacheDefaults() throws Exception {
+		assertThat(Utils.getCacheDefaults(getClass())).isEqualTo(Optional.empty());
+	}
 }
