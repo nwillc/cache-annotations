@@ -17,7 +17,7 @@
 buildscript {
     repositories {
         jcenter {
-            url 'http://jcenter.bintray.com'
+            url "http://jcenter.bintray.com"
         }
         maven {
             url "https://plugins.gradle.org/m2/"
@@ -29,34 +29,34 @@ buildscript {
     dependencies {
         classpath "gradle.plugin.com.github.nwillc:vplugin:1.2.4",
                 "nl.eveoh:gradle-aspectj:1.6",
-                'au.com.ish.gradle:release:2.2.2',
-                'org.tmatesoft.sqljet:sqljet:1.1.9'
+                "au.com.ish.gradle:release:2.2.2",
+                "org.tmatesoft.sqljet:sqljet:1.1.9"
     }
 }
 
 project.ext {
-    aspectjVersion = '1.8.7'
+    aspectjVersion = "1.8.7"
 }
 
-apply plugin: 'aspectj'
-apply plugin: 'java'
-apply plugin: 'com.github.nwillc.vplugin'
-apply plugin: 'release'
+apply plugin: "aspectj"
+apply plugin: "java"
+apply plugin: "com.github.nwillc.vplugin"
+apply plugin: "release"
 apply plugin: "maven-publish"
 
 repositories {
     jcenter {
-        url 'http://jcenter.bintray.com'
+        url "http://jcenter.bintray.com"
     }
 }
 
 dependencies {
-    compile 'org.slf4j:slf4j-api:1.7.13',
-            'org.aspectj:aspectjrt:1.8.7',
-            'javax.cache:cache-api:1.0.0'
+    compile "org.slf4j:slf4j-api:1.7.13",
+            "org.aspectj:aspectjrt:1.8.7",
+            "javax.cache:cache-api:1.0.0"
 
-    testCompile 'junit:junit:4.12',
-            'com.github.nwillc:contracts:1.7.1'
+    testCompile "junit:junit:4.12",
+            "com.github.nwillc:contracts:1.7.1"
 
 }
 
@@ -86,18 +86,18 @@ test {
 jar {
     dependsOn classes
     from sourceSets.main.output
-    exclude('**/examples')     // Exclude the examples needed for tests
+    exclude("**/examples")     // Exclude the examples needed for tests
 }
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allSource
-    classifier = 'sources'
+    classifier = "sources"
 }
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
-    exclude('**/examples')     // Exclude the examples needed for tests
-    classifier = 'javadoc'
+    exclude("**/examples")     // Exclude the examples needed for tests
+    classifier = "javadoc"
 }
 
 publishing {
@@ -114,6 +114,6 @@ release {
     failOnSnapshotDependencies = true
     allowLocalModifications = true
     releaseDryRun = false
-    scm = 'git'
+    scm = "git"
 }
 
