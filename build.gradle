@@ -28,7 +28,9 @@ buildscript {
     }
     dependencies {
         classpath "gradle.plugin.com.github.nwillc:vplugin:1.2.4",
-                "nl.eveoh:gradle-aspectj:1.6"
+                "nl.eveoh:gradle-aspectj:1.6",
+                'au.com.ish.gradle:release:2.2.2',
+                'org.tmatesoft.sqljet:sqljet:1.1.9'
     }
 }
 
@@ -39,7 +41,8 @@ project.ext {
 apply plugin: 'aspectj'
 apply plugin: 'java'
 apply plugin: 'com.github.nwillc.vplugin'
-
+apply plugin: 'release'
+apply plugin: "maven-publish"
 
 repositories {
     jcenter {
@@ -58,13 +61,59 @@ dependencies {
 }
 
 group = "com.github.nwillc"
-version = "1.0.1"
+version = "0.0.1"
 targetCompatibility = "1.8"
 sourceCompatibility = "1.8"
 
+test {
+    beforeTest { descriptor ->
+        logger.lifecycle("\tRunning " + descriptor.className + "." + descriptor.name)
+    }
+
+    afterSuite { descriptor, result ->
+        if (descriptor.parent == null) {
+            logger.lifecycle("\tTests run: " + result.testCount
+                    + ", Failures: " + result.failedTestCount
+                    + ", Skipped: " + result.skippedTestCount)
+        }
+    }
+
+    testLogging {
+        exceptionFormat "full"
+    }
+}
+
 jar {
-    baseName = 'core'
     dependsOn classes
     from sourceSets.main.output
-    exclude('**/examples')
+    exclude('**/examples')     // Exclude the examples needed for tests
 }
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    from javadoc.destinationDir
+    exclude('**/examples')     // Exclude the examples needed for tests
+    classifier = 'javadoc'
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourceJar
+            artifact javadocJar
+        }
+    }
+}
+
+release {
+    failOnSnapshotDependencies = true
+    allowLocalModifications = true
+    releaseDryRun = false
+    scm = 'git'
+}
+
