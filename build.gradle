@@ -36,9 +36,10 @@ project.ext {
     aspectjVersion = '1.8.7'
 }
 
+apply plugin: 'aspectj'
 apply plugin: 'java'
 apply plugin: 'com.github.nwillc.vplugin'
-apply plugin: 'aspectj'
+
 
 repositories {
     jcenter {
@@ -53,9 +54,17 @@ dependencies {
 
     testCompile 'junit:junit:4.12',
             'com.github.nwillc:contracts:1.7.1'
+
 }
 
 group = "com.github.nwillc"
 version = "1.0.1"
 targetCompatibility = "1.8"
 sourceCompatibility = "1.8"
+
+jar {
+    baseName = 'core'
+    dependsOn classes
+    from sourceSets.main.output
+    exclude('**/*Foo*')
+}
