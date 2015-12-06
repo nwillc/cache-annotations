@@ -16,7 +16,7 @@
 
 package com.github.nwillc.cache.annotation;
 
-import com.github.nwillc.cache.annotation.examples.Foo;
+import com.github.nwillc.cache.annotation.examples.CachePutExample;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,7 +25,7 @@ public class CachePutAspectTest {
 
 	@Test
 	public void shouldCut() throws Exception {
-		Foo foo = new Foo();
+		CachePutExample foo = new CachePutExample();
 
 		assertThat(foo.put(1L,"two")).isEqualTo("foo");
 	}

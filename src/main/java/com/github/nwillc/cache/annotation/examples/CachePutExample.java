@@ -18,7 +18,7 @@ package com.github.nwillc.cache.annotation.examples;
 
 import javax.cache.annotation.CachePut;
 
-public class Foo {
+public class CachePutExample {
 	@CachePut(cacheName = "foo")
 	public String put(Long id, String value) {
 		return "bar";
