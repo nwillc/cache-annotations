@@ -66,5 +66,5 @@ jar {
     baseName = 'core'
     dependsOn classes
     from sourceSets.main.output
-    exclude('**/*Foo*')
+    exclude('**/examples')
 }

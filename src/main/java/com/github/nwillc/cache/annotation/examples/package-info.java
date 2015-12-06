@@ -14,13 +14,9 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.github.nwillc.cache.annotation;
-
-import javax.cache.annotation.CachePut;
-
-class Foo {
-	@CachePut(cacheName = "foo")
-	String put(Long id, String value) {
-		return "bar";
-	}
-}
+/**
+ *  This package of examples using the aspects is an artifact of wanting to test them with junit and gradle.
+ *  For  JUnit tests to have test classes with the aspects woven in it seemed to need to have them in the
+ *  main source. This entire package <b>is excluded</b> from the distribution binary jar however.
+ */
+package com.github.nwillc.cache.annotation.examples;

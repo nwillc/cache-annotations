@@ -14,21 +14,13 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.github.nwillc.cache.annotation;
+package com.github.nwillc.cache.annotation.examples;
 
-import com.github.nwillc.cache.annotation.examples.Foo;
-import org.junit.Test;
+import javax.cache.annotation.CachePut;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-public class CachePutAspectTest {
-
-	@Test
-	public void shouldCut() throws Exception {
-		Foo foo = new Foo();
-
-		assertThat(foo.put(1L,"two")).isEqualTo("foo");
+public class Foo {
+	@CachePut(cacheName = "foo")
+	public String put(Long id, String value) {
+		return "bar";
 	}
-
-
 }
