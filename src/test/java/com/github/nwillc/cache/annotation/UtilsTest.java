@@ -20,11 +20,14 @@ package com.github.nwillc.cache.annotation;
 import com.github.nwillc.contracts.UtilityClassContract;
 import org.junit.Test;
 
+import javax.cache.annotation.CacheDefaults;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class UtilsTest extends UtilityClassContract {
+	private static final String CACHE_NAME = "foo";
+
 	@Override
 	public Class<?> getClassToTest() {
 		return Utils.class;
@@ -32,6 +35,18 @@ public class UtilsTest extends UtilityClassContract {
 
 	@Test
 	public void shouldReturnNoCacheDefaults() throws Exception {
-		assertThat(Utils.getCacheDefaults(getClass())).isEqualTo(Optional.empty());
+		assertThat(Utils.getCacheDefaults(getClass()).isPresent()).isFalse();
+	}
+
+	@Test
+	public void shouldReturnCacheDefaults() throws Exception {
+		Optional<CacheDefaults> cacheDefaults = Utils.getCacheDefaults(Foo.class);
+		assertThat(cacheDefaults.isPresent()).isTrue();
+		assertThat(cacheDefaults.get().cacheName()).isEqualTo(CACHE_NAME);
+	}
+
+	@CacheDefaults(cacheName = CACHE_NAME)
+	class Foo {
+
 	}
 }

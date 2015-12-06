@@ -17,12 +17,18 @@
 package com.github.nwillc.cache.annotation;
 
 import javax.cache.annotation.CacheDefaults;
+import java.lang.annotation.Annotation;
 import java.util.Optional;
 
 public final class Utils {
 	private Utils() {}
 
 	public static Optional<CacheDefaults> getCacheDefaults(Class clz) {
+		Annotation annotation = clz.getAnnotation(CacheDefaults.class);
+		if (annotation instanceof CacheDefaults) {
+			CacheDefaults cacheDefaults = (CacheDefaults)annotation;
+			return Optional.of(cacheDefaults);
+		}
 		return Optional.empty();
 	}
 }
