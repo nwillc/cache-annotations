@@ -42,7 +42,7 @@ public class CachePutAspectTest {
 
 	@Test
 	public void shouldCut() throws Exception {
-		CachePutExample<Long,String> foo = new CachePutExample<>();
+		CachePutExample<Long, String> foo = new CachePutExample<>();
 
 		assertThat(cache).isEmpty();
 		foo.put(1L, "foo");
@@ -50,6 +50,4 @@ public class CachePutAspectTest {
 		assertThat(cache).hasSize(1);
 		assertThat(cache.get(1L)).isEqualTo("foo");
 	}
-
-
 }
