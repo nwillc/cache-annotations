@@ -14,24 +14,25 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.github.nwillc.cache.annotation.aspects;
+package com.github.nwillc.cache.annotation;
 
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
+import javax.cache.annotation.CacheInvocationContext;
+import javax.cache.annotation.CacheInvocationParameter;
+import java.lang.annotation.Annotation;
 
-import javax.cache.Cache;
-import javax.cache.Caching;
+public class InvocationContext<A extends Annotation> extends MethodDetails<A> implements CacheInvocationContext<A> {
+    @Override
+    public Object getTarget() {
+        return null;
+    }
 
-@Aspect
-public class CachePut {
-	@Around("execution(* *(..)) && @annotation(cachePut)")
-	public Object put(ProceedingJoinPoint joinPoint, javax.cache.annotation.CachePut cachePut) throws Throwable {
-		Object result = joinPoint.proceed();
-		Cache<Object, Object> cache = Caching.getCachingProvider().getCacheManager().getCache(cachePut.cacheName());
-		Object[] args = joinPoint.getArgs();
-		cache.put(args[0], args[1]);
-		return result;
-	}
+    @Override
+    public CacheInvocationParameter[] getAllParameters() {
+        return new CacheInvocationParameter[0];
+    }
 
+    @Override
+    public <T> T unwrap(Class<T> cls) {
+        return null;
+    }
 }

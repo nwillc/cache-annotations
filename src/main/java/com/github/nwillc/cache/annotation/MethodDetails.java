@@ -14,22 +14,31 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.github.nwillc.cache.annotation.aspects;
+package com.github.nwillc.cache.annotation;
 
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
+import javax.cache.annotation.CacheMethodDetails;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.Set;
 
-import javax.cache.Cache;
-import javax.cache.Caching;
+public class MethodDetails<A extends Annotation> implements CacheMethodDetails<A> {
+    @Override
+    public Method getMethod() {
+        return null;
+    }
 
-@Aspect
-public class CacheRemove {
-	@Around("execution(* *(..)) && @annotation(cacheRemove)")
-	public Object get(ProceedingJoinPoint joinPoint, javax.cache.annotation.CacheRemove cacheRemove) throws Throwable {
-        Cache<Object, Object> cache = Caching.getCachingProvider().getCacheManager().getCache(cacheRemove.cacheName());
-        Object[] args = joinPoint.getArgs();
-        cache.remove(args[0]);
-        return joinPoint.proceed();
-	}
+    @Override
+    public Set<Annotation> getAnnotations() {
+        return null;
+    }
+
+    @Override
+    public A getCacheAnnotation() {
+        return null;
+    }
+
+    @Override
+    public String getCacheName() {
+        return null;
+    }
 }
