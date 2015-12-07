@@ -17,17 +17,38 @@
 package com.github.nwillc.cache.annotation;
 
 import com.github.nwillc.cache.annotation.examples.CachePutExample;
+import org.junit.Before;
 import org.junit.Test;
+
+import javax.cache.Cache;
+import javax.cache.CacheManager;
+import javax.cache.Caching;
+import javax.cache.configuration.MutableConfiguration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CachePutAspectTest {
+	private Cache<Long,String> cache;
+
+	@Before
+	public void setUp() throws Exception {
+		CacheManager cacheManager = Caching.getCachingProvider().getCacheManager();
+		cache = cacheManager.getCache(CachePutExample.CACHE_NAME);
+		if (cache == null) {
+			cache = cacheManager.createCache(CachePutExample.CACHE_NAME, new MutableConfiguration<>());
+		}
+		assertThat(cache).isNotNull();
+	}
 
 	@Test
 	public void shouldCut() throws Exception {
-		CachePutExample foo = new CachePutExample();
+		CachePutExample<Long,String> foo = new CachePutExample<>();
 
-		assertThat(foo.put(1L,"two")).isEqualTo("foo");
+		assertThat(cache).isEmpty();
+		foo.put(1L, "foo");
+		assertThat(foo.getMap().get(1L)).isEqualTo("foo");
+		assertThat(cache).hasSize(1);
+		assertThat(cache.get(1L)).isEqualTo("foo");
 	}
 
 

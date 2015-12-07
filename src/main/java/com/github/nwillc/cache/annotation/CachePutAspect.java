@@ -20,13 +20,20 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 
+import javax.cache.Cache;
+import javax.cache.Caching;
 import javax.cache.annotation.CachePut;
 
 @Aspect
 public class CachePutAspect {
 	@Around("execution(* *(..)) && @annotation(cachePut)")
-	public Object around(ProceedingJoinPoint joinPoint, CachePut cachePut) throws Throwable {
+	public Object put(ProceedingJoinPoint joinPoint, CachePut cachePut) throws Throwable {
 		Object result = joinPoint.proceed();
-		return cachePut.cacheName();
+		cachePut.cacheName();
+		Cache<Object, Object> cache = Caching.getCachingProvider().getCacheManager().getCache(cachePut.cacheName());
+		Object[] args = joinPoint.getArgs();
+		cache.put(args[0], args[1]);
+		return result;
 	}
+
 }

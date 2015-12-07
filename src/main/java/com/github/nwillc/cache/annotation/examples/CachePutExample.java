@@ -17,10 +17,19 @@
 package com.github.nwillc.cache.annotation.examples;
 
 import javax.cache.annotation.CachePut;
+import java.util.HashMap;
+import java.util.Map;
 
-public class CachePutExample {
-	@CachePut(cacheName = "foo")
-	public String put(Long id, String value) {
-		return "bar";
+public class CachePutExample<K,V> {
+	public static final String CACHE_NAME = "example";
+	private Map<K,V> map = new HashMap<>();
+
+	@CachePut(cacheName = CACHE_NAME)
+	public void put(K key, V value) {
+		map.put(key, value);
+	}
+
+	public Map<K, V> getMap() {
+		return map;
 	}
 }
