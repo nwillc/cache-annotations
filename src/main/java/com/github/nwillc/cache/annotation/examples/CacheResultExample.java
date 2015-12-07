@@ -16,16 +16,16 @@
 
 package com.github.nwillc.cache.annotation.examples;
 
-import javax.cache.annotation.CachePut;
+import javax.cache.annotation.CacheResult;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CachePutExample<K,V> implements ExampleCache {
+public class CacheResultExample<K,V> implements ExampleCache {
 	private Map<K,V> map = new HashMap<>();
 
-	@CachePut(cacheName = CACHE_NAME)
-	public void put(K key, V value) {
-		map.put(key, value);
+	@CacheResult(cacheName = CACHE_NAME)
+	public V get(K key) {
+		return map.get(key);
 	}
 
 	public Map<K, V> getMap() {

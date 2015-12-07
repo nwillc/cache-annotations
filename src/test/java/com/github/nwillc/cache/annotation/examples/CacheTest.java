@@ -16,19 +16,31 @@
 
 package com.github.nwillc.cache.annotation.examples;
 
-import javax.cache.annotation.CachePut;
-import java.util.HashMap;
-import java.util.Map;
+import org.junit.After;
+import org.junit.Before;
 
-public class CachePutExample<K,V> implements ExampleCache {
-	private Map<K,V> map = new HashMap<>();
+import javax.cache.Cache;
+import javax.cache.CacheManager;
+import javax.cache.Caching;
+import javax.cache.configuration.MutableConfiguration;
 
-	@CachePut(cacheName = CACHE_NAME)
-	public void put(K key, V value) {
-		map.put(key, value);
+import static org.assertj.core.api.Assertions.assertThat;
+
+public class CacheTest {
+	protected Cache<Long,String> cache;
+
+	@Before
+	public void setUp() throws Exception {
+		CacheManager cacheManager = Caching.getCachingProvider().getCacheManager();
+		cache = cacheManager.getCache(ExampleCache.CACHE_NAME);
+		if (cache == null) {
+			cache = cacheManager.createCache(ExampleCache.CACHE_NAME, new MutableConfiguration<>());
+		}
+		assertThat(cache).isNotNull();
 	}
 
-	public Map<K, V> getMap() {
-		return map;
+	@After
+	public void tearDown() throws Exception {
+		cache.close();
 	}
 }

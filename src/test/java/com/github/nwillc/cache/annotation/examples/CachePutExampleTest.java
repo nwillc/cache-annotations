@@ -14,32 +14,13 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.github.nwillc.cache.annotation;
+package com.github.nwillc.cache.annotation.examples;
 
-import com.github.nwillc.cache.annotation.examples.CachePutExample;
-import org.junit.Before;
 import org.junit.Test;
-
-import javax.cache.Cache;
-import javax.cache.CacheManager;
-import javax.cache.Caching;
-import javax.cache.configuration.MutableConfiguration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CachePutAspectTest {
-	private Cache<Long,String> cache;
-
-	@Before
-	public void setUp() throws Exception {
-		CacheManager cacheManager = Caching.getCachingProvider().getCacheManager();
-		cache = cacheManager.getCache(CachePutExample.CACHE_NAME);
-		if (cache == null) {
-			cache = cacheManager.createCache(CachePutExample.CACHE_NAME, new MutableConfiguration<>());
-		}
-		assertThat(cache).isNotNull();
-	}
-
+public class CachePutExampleTest extends CacheTest {
 	@Test
 	public void shouldCut() throws Exception {
 		CachePutExample<Long, String> foo = new CachePutExample<>();

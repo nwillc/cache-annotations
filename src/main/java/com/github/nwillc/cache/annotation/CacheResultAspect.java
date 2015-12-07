@@ -14,21 +14,18 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.github.nwillc.cache.annotation.examples;
+package com.github.nwillc.cache.annotation;
 
-import javax.cache.annotation.CachePut;
-import java.util.HashMap;
-import java.util.Map;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
 
-public class CachePutExample<K,V> implements ExampleCache {
-	private Map<K,V> map = new HashMap<>();
+import javax.cache.annotation.CacheResult;
 
-	@CachePut(cacheName = CACHE_NAME)
-	public void put(K key, V value) {
-		map.put(key, value);
-	}
-
-	public Map<K, V> getMap() {
-		return map;
+@Aspect
+public class CacheResultAspect {
+	@Around("execution(* *(..)) && @annotation(cacheResult)")
+	public Object get(ProceedingJoinPoint joinPoint, CacheResult cacheResult) throws Throwable {
+		return joinPoint.proceed();
 	}
 }
