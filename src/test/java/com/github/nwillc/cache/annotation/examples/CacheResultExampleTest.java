@@ -16,15 +16,28 @@
 
 package com.github.nwillc.cache.annotation.examples;
 
+import org.junit.Before;
 import org.junit.Test;
 
-/**
- *
- */
+import static org.assertj.core.api.Assertions.assertThat;
+
 public class CacheResultExampleTest extends CacheTest {
+    private CacheResultExample<Long,String> cacheResultExample;
 
-	@Test
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        cacheResultExample = new CacheResultExample<>();
+    }
+
+    @Test
 	public void shouldGet() throws Exception {
-
+        cacheResultExample.getMap().put(1L, "foo");
+        assertThat(cache).isEmpty();
+        assertThat(cacheResultExample.get(1L)).isEqualTo("foo");
+        assertThat(cache).hasSize(1);
+        cacheResultExample.getMap().clear();
+        assertThat(cacheResultExample.get(1L)).isEqualTo("foo");
 	}
 }

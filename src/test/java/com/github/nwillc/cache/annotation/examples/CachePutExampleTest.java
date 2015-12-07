@@ -16,18 +16,26 @@
 
 package com.github.nwillc.cache.annotation.examples;
 
+import org.junit.Before;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CachePutExampleTest extends CacheTest {
-	@Test
-	public void shouldCut() throws Exception {
-		CachePutExample<Long, String> foo = new CachePutExample<>();
+    private CachePutExample<Long, String> cachePutExample;
 
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+        cachePutExample = new CachePutExample<>();
+    }
+
+    @Test
+	public void shouldCut() throws Exception {
 		assertThat(cache).isEmpty();
-		foo.put(1L, "foo");
-		assertThat(foo.getMap().get(1L)).isEqualTo("foo");
+		cachePutExample.put(1L, "foo");
+		assertThat(cachePutExample.getMap().get(1L)).isEqualTo("foo");
 		assertThat(cache).hasSize(1);
 		assertThat(cache.get(1L)).isEqualTo("foo");
 	}
