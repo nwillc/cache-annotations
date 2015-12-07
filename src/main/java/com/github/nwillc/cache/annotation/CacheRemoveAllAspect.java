@@ -28,7 +28,6 @@ import javax.cache.annotation.CacheRemoveAll;
 public class CacheRemoveAllAspect {
 	@Around("execution(* *(..)) && @annotation(cacheRemoveAll)")
 	public Object get(ProceedingJoinPoint joinPoint, CacheRemoveAll cacheRemoveAll) throws Throwable {
-        cacheRemoveAll.cacheName();
         Cache<Object, Object> cache = Caching.getCachingProvider().getCacheManager().getCache(cacheRemoveAll.cacheName());
         cache.clear();
         return joinPoint.proceed();

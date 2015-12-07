@@ -22,17 +22,15 @@ import org.aspectj.lang.annotation.Aspect;
 
 import javax.cache.Cache;
 import javax.cache.Caching;
-import javax.cache.annotation.CachePut;
+import javax.cache.annotation.CacheRemove;
 
 @Aspect
-public class CachePutAspect {
-	@Around("execution(* *(..)) && @annotation(cachePut)")
-	public Object put(ProceedingJoinPoint joinPoint, CachePut cachePut) throws Throwable {
-		Object result = joinPoint.proceed();
-		Cache<Object, Object> cache = Caching.getCachingProvider().getCacheManager().getCache(cachePut.cacheName());
-		Object[] args = joinPoint.getArgs();
-		cache.put(args[0], args[1]);
-		return result;
+public class CacheRemoveAspect {
+	@Around("execution(* *(..)) && @annotation(cacheRemove)")
+	public Object get(ProceedingJoinPoint joinPoint, CacheRemove cacheRemove) throws Throwable {
+        Cache<Object, Object> cache = Caching.getCachingProvider().getCacheManager().getCache(cacheRemove.cacheName());
+        Object[] args = joinPoint.getArgs();
+        cache.remove(args[0]);
+        return joinPoint.proceed();
 	}
-
 }

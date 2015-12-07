@@ -28,7 +28,6 @@ import javax.cache.annotation.CacheResult;
 public class CacheResultAspect {
 	@Around("execution(* *(..)) && @annotation(cacheResult)")
 	public Object get(ProceedingJoinPoint joinPoint, CacheResult cacheResult) throws Throwable {
-        cacheResult.cacheName();
         Cache<Object, Object> cache = Caching.getCachingProvider().getCacheManager().getCache(cacheResult.cacheName());
         Object[] args = joinPoint.getArgs();
         Object value = cache.get(args[0]);

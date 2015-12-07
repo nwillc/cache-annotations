@@ -17,6 +17,7 @@
 package com.github.nwillc.cache.annotation.examples;
 
 import javax.cache.annotation.CachePut;
+import javax.cache.annotation.CacheRemove;
 import javax.cache.annotation.CacheRemoveAll;
 import javax.cache.annotation.CacheResult;
 import java.util.HashMap;
@@ -34,6 +35,11 @@ public class CacheAnnotationExample<K,V>  {
     @CacheResult(cacheName = CACHE_NAME)
     public V get(K key) {
         return map.get(key);
+    }
+
+    @CacheRemove(cacheName = CACHE_NAME)
+    public V remove(K key) {
+       return map.remove(key);
     }
 
     @CacheRemoveAll(cacheName = CACHE_NAME)

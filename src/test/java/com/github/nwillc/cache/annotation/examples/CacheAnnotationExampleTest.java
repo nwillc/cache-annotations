@@ -78,4 +78,16 @@ public class CacheAnnotationExampleTest {
         assertThat(cache).isEmpty();
         assertThat(cacheAnnotationExample.getMap()).isEmpty();
     }
+
+    @Test
+    public void testRemove() throws Exception {
+        assertThat(cache).isEmpty();
+        assertThat(cacheAnnotationExample.getMap()).isEmpty();
+        cacheAnnotationExample.put(0L, "bar");
+        cacheAnnotationExample.put(1L, "baz");
+        assertThat(cache).hasSize(2);
+        assertThat(cacheAnnotationExample.getMap()).hasSize(2);
+        cacheAnnotationExample.remove(1L);
+        assertThat(cache).hasSize(1);
+    }
 }
