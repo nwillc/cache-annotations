@@ -14,29 +14,23 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.github.nwillc.cache.annotation.examples;
+package com.github.nwillc.cache.annotation;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import javax.cache.Cache;
+import javax.cache.Caching;
+import javax.cache.annotation.CacheRemoveAll;
 
-public class CachePutExampleTest extends CacheTest {
-    private CachePutExample<Long, String> cachePutExample;
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        super.setUp();
-        cachePutExample = new CachePutExample<>();
-    }
-
-    @Test
-	public void shouldCut() throws Exception {
-		assertThat(cache).isEmpty();
-		cachePutExample.put(1L, "foo");
-		assertThat(cachePutExample.getMap().get(1L)).isEqualTo("foo");
-		assertThat(cache).hasSize(1);
-		assertThat(cache.get(1L)).isEqualTo("foo");
+@Aspect
+public class CacheRemoveAllAspect {
+	@Around("execution(* *(..)) && @annotation(cacheRemoveAll)")
+	public Object get(ProceedingJoinPoint joinPoint, CacheRemoveAll cacheRemoveAll) throws Throwable {
+        cacheRemoveAll.cacheName();
+        Cache<Object, Object> cache = Caching.getCachingProvider().getCacheManager().getCache(cacheRemoveAll.cacheName());
+        cache.clear();
+        return joinPoint.proceed();
 	}
 }
