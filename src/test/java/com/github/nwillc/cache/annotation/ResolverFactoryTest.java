@@ -16,15 +16,20 @@
 
 package com.github.nwillc.cache.annotation;
 
-import javax.cache.Cache;
-import javax.cache.Caching;
-import javax.cache.annotation.CacheInvocationContext;
-import javax.cache.annotation.CacheResolver;
-import java.lang.annotation.Annotation;
+import org.junit.Test;
 
-public class Resolver implements CacheResolver {
-    @Override
-    public <K, V> Cache<K, V> resolveCache(CacheInvocationContext<? extends Annotation> cacheInvocationContext) {
-        return Caching.getCachingProvider().getCacheManager().getCache(cacheInvocationContext.getCacheName());
+import javax.cache.annotation.CacheResolver;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+public class ResolverFactoryTest {
+
+    @Test
+    public void testGetCacheResolver() throws Exception {
+        ResolverFactory resolverFactory = new ResolverFactory();
+        CacheResolver cacheResolver = resolverFactory.getCacheResolver(null);
+
+        assertThat(cacheResolver).isNotNull();
+        assertThat(cacheResolver).isInstanceOf(Resolver.class);
     }
 }
