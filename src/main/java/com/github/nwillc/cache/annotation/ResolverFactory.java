@@ -17,40 +17,21 @@
 package com.github.nwillc.cache.annotation;
 
 import javax.cache.annotation.CacheMethodDetails;
+import javax.cache.annotation.CacheResolver;
+import javax.cache.annotation.CacheResolverFactory;
+import javax.cache.annotation.CacheResult;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.Set;
 
-public class MethodDetails<A extends Annotation> implements CacheMethodDetails<A> {
-    private final Method method;
-	private final Set<Annotation> annotations;
-	private final A cacheAnnotation;
-	private final String cacheName;
+public class ResolverFactory implements CacheResolverFactory {
+	private Resolver resolver = new Resolver();
 
-	public MethodDetails(Set<Annotation> annotations, Method method, A cacheAnnotation, String cacheName) {
-		this.annotations = annotations;
-		this.method = method;
-		this.cacheAnnotation = cacheAnnotation;
-		this.cacheName = cacheName;
+	@Override
+	public CacheResolver getCacheResolver(CacheMethodDetails<? extends Annotation> cacheMethodDetails) {
+		return resolver;
 	}
 
 	@Override
-    public Method getMethod() {
-        return method;
-    }
-
-    @Override
-    public Set<Annotation> getAnnotations() {
-        return annotations;
-    }
-
-    @Override
-    public A getCacheAnnotation() {
-        return cacheAnnotation;
-    }
-
-    @Override
-    public String getCacheName() {
-        return cacheName;
-    }
+	public CacheResolver getExceptionCacheResolver(CacheMethodDetails<CacheResult> cacheMethodDetails) {
+		return null;
+	}
 }

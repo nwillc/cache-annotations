@@ -19,16 +19,30 @@ package com.github.nwillc.cache.annotation;
 import javax.cache.annotation.CacheInvocationContext;
 import javax.cache.annotation.CacheInvocationParameter;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.Set;
 
-public class InvocationContext<A extends Annotation> extends MethodDetails<A> implements CacheInvocationContext<A> {
+public class InvocationContext<A extends Annotation>
+        extends MethodDetails<A> implements CacheInvocationContext<A> {
+    private final Object target;
+    private final CacheInvocationParameter[] allParameters;
+
+    public InvocationContext(
+            Set<Annotation> annotations, Method method, A cacheAnnotation, String cacheName,
+            CacheInvocationParameter[] allParameters, Object target) {
+        super(annotations, method, cacheAnnotation, cacheName);
+        this.allParameters = allParameters;
+        this.target = target;
+    }
+
     @Override
     public Object getTarget() {
-        return null;
+        return target;
     }
 
     @Override
     public CacheInvocationParameter[] getAllParameters() {
-        return new CacheInvocationParameter[0];
+        return allParameters;
     }
 
     @Override

@@ -21,7 +21,7 @@ import javax.cache.annotation.CacheInvocationContext;
 import javax.cache.annotation.CacheResolver;
 import java.lang.annotation.Annotation;
 
-public class DefaultResolver implements CacheResolver {
+public class Resolver implements CacheResolver {
     @Override
     public <K, V> Cache<K, V> resolveCache(CacheInvocationContext<? extends Annotation> cacheInvocationContext) {
         return null;
