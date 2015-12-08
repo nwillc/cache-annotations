@@ -18,10 +18,37 @@ package com.github.nwillc.cache.annotation.aspects;
 
 import com.github.nwillc.cache.annotation.CacheRegistry;
 
+import javax.cache.annotation.CachePut;
+import javax.cache.annotation.CacheResolverFactory;
+import java.lang.annotation.Annotation;
+
 public class CacheAspect {
     private final CacheRegistry cacheRegistry = CacheRegistry.getInstance();
 
     public CacheRegistry getCacheRegistry() {
         return cacheRegistry;
+    }
+
+    public enum CacheAnnotationType {
+        PUT {
+            @Override
+            public String cacheName(Annotation a, Object target) {
+                if (a instanceof CachePut) {
+                    return ((CachePut)a).cacheName();
+                }
+                return null;
+            }
+
+            @Override
+            public Class<? extends CacheResolverFactory> cacheResolverFactory(Annotation a, Object target) {
+                if (a instanceof CachePut) {
+                    return ((CachePut)a).cacheResolverFactory();
+                }
+                return null;
+            }
+        };
+
+        abstract public String cacheName(Annotation a, Object target);
+        abstract public Class<? extends CacheResolverFactory> cacheResolverFactory(Annotation a, Object target);
     }
 }

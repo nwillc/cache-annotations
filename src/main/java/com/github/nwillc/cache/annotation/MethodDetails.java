@@ -16,6 +16,10 @@
 
 package com.github.nwillc.cache.annotation;
 
+import com.github.nwillc.cache.annotation.aspects.CacheAspect;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.reflect.MethodSignature;
+
 import javax.cache.annotation.CacheMethodDetails;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -26,6 +30,14 @@ public class MethodDetails<A extends Annotation> implements CacheMethodDetails<A
 	private final Set<Annotation> annotations;
 	private final A cacheAnnotation;
 	private final String cacheName;
+
+    public MethodDetails(ProceedingJoinPoint joinPoint, A cacheAnnotation, CacheAspect.CacheAnnotationType cat) {
+        this((MethodSignature)joinPoint.getSignature(), cacheAnnotation, cat.cacheName(cacheAnnotation, null));
+    }
+
+    public MethodDetails(MethodSignature ms, A cacheAnnotation, String cacheName) {
+        this(null, ms.getMethod(), cacheAnnotation, cacheName);
+    }
 
 	public MethodDetails(Set<Annotation> annotations, Method method, A cacheAnnotation, String cacheName) {
 		this.annotations = annotations;

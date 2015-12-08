@@ -16,6 +16,9 @@
 
 package com.github.nwillc.cache.annotation;
 
+import com.github.nwillc.cache.annotation.aspects.CacheAspect;
+import org.aspectj.lang.ProceedingJoinPoint;
+
 import javax.cache.annotation.CacheInvocationContext;
 import javax.cache.annotation.CacheInvocationParameter;
 import java.lang.annotation.Annotation;
@@ -26,6 +29,12 @@ public class InvocationContext<A extends Annotation>
         extends MethodDetails<A> implements CacheInvocationContext<A> {
     private final Object target;
     private final CacheInvocationParameter[] allParameters;
+
+    public InvocationContext(ProceedingJoinPoint pjp, A cacheAnnotation, CacheAspect.CacheAnnotationType cat) {
+        super(pjp, cacheAnnotation, cat);
+        this.target = pjp.getTarget();
+        allParameters = null;
+    }
 
     public InvocationContext(
             Set<Annotation> annotations, Method method, A cacheAnnotation, String cacheName,

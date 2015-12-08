@@ -16,14 +16,18 @@
 
 package com.github.nwillc.cache.annotation;
 
+import com.github.nwillc.cache.annotation.aspects.CacheAspect;
+
 import javax.cache.Cache;
+import javax.cache.annotation.CacheResolver;
+import javax.cache.annotation.CacheResolverFactory;
 import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CacheRegistry {
     private static final CacheRegistry ourInstance = new CacheRegistry();
-    private final Map<Annotation, Cache> registry = new ConcurrentHashMap<>();
+    private final Map<Annotation, Cache<Object,Object>> registry = new ConcurrentHashMap<>();
 
     public static CacheRegistry getInstance() {
         return ourInstance;
@@ -32,12 +36,21 @@ public class CacheRegistry {
     private CacheRegistry() {
     }
 
-    public Cache get(Annotation key) {
+    public Cache<Object,Object> get(Annotation key) {
 
-        Cache cache = registry.get(key);
+        Cache<Object,Object> cache = registry.get(key);
         if (cache != null && cache.isClosed()) {
             cache = null;
         }
+        return cache;
+    }
+
+    public Cache<Object,Object> register(Annotation key, InvocationContext invocationContext, CacheAspect.CacheAnnotationType cat)
+            throws InstantiationException, IllegalAccessException {
+        CacheResolverFactory cacheResolverFactory = Utils.getCacheResolverFactory(cat.cacheResolverFactory(invocationContext.getCacheAnnotation(),null), invocationContext.getTarget().getClass());
+        CacheResolver cacheResolver = cacheResolverFactory.getCacheResolver(invocationContext);
+        Cache<Object,Object> cache = cacheResolver.resolveCache(invocationContext);
+        registry.put(key, cache);
         return cache;
     }
 
