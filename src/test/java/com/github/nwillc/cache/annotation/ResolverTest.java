@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.cache.Cache;
+import javax.cache.CacheManager;
 import javax.cache.Caching;
 import javax.cache.annotation.CachePut;
 import javax.cache.configuration.MutableConfiguration;
@@ -44,10 +45,12 @@ public class ResolverTest {
 
     @Test
     public void testKnowCache() throws Exception {
-        Caching.getCachingProvider().getCacheManager().createCache("foo", new MutableConfiguration<>());
+        CacheManager cacheManager = Caching.getCachingProvider().getCacheManager();
+        cacheManager.createCache("foo", new MutableConfiguration<>());
         InvocationContext<CachePut> context = new InvocationContext<>(null, null, null, "foo", null, null);
         Cache<Object, Object> cache = resolver.resolveCache(context);
 
         assertThat(cache).isNotNull();
+        cacheManager.destroyCache("foo");
     }
 }
