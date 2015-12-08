@@ -16,19 +16,29 @@
 
 package com.github.nwillc.cache.annotation.aspects;
 
+import com.github.nwillc.cache.annotation.InvocationContext;
+import com.github.nwillc.cache.annotation.Utils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 
 import javax.cache.Cache;
-import javax.cache.Caching;
+import javax.cache.annotation.CacheResolver;
+import javax.cache.annotation.CacheResolverFactory;
 import javax.cache.annotation.CacheResult;
 
 @Aspect
-public class Result {
+public class Result extends CacheAspect {
 	@Around("execution(* *(..)) && @annotation(cacheResult)")
 	public Object get(ProceedingJoinPoint joinPoint, CacheResult cacheResult) throws Throwable {
-        Cache<Object, Object> cache = Caching.getCachingProvider().getCacheManager().getCache(cacheResult.cacheName());
+        Cache cache = getCacheRegistry().get(cacheResult);
+
+        if (cache == null) {
+            CacheResolverFactory cacheResolverFactory = Utils.getCacheResolverFactory(cacheResult.cacheResolverFactory(), joinPoint.getTarget().getClass());
+            CacheResolver cacheResolver = cacheResolverFactory.getCacheResolver(null);
+            cache = cacheResolver.resolveCache(new InvocationContext<>(null, null, cacheResult, cacheResult.cacheName(), null, joinPoint.getTarget()));
+            getCacheRegistry().put(cacheResult, cache);
+        }
         Object[] args = joinPoint.getArgs();
         Object value = cache.get(args[0]);
         if (value != null) {

@@ -17,11 +17,28 @@
 package com.github.nwillc.cache.annotation;
 
 import javax.cache.annotation.CacheDefaults;
+import javax.cache.annotation.CacheResolverFactory;
 import java.lang.annotation.Annotation;
 import java.util.Optional;
 
 public final class Utils {
+    private static final CacheResolverFactory DEFAULT_FACTORY = new ResolverFactory();
+
 	private Utils() {}
+
+    public static CacheResolverFactory getCacheResolverFactory(Class<? extends CacheResolverFactory> resolverFactory, Class target)
+            throws IllegalAccessException, InstantiationException {
+        if (!resolverFactory.equals(CacheResolverFactory.class)) {
+            return resolverFactory.newInstance();
+        }
+
+        Optional<CacheDefaults> cacheDefaults = getCacheDefaults(target);
+        if (cacheDefaults.isPresent() && !cacheDefaults.get().cacheResolverFactory().equals(CacheResolverFactory.class)){
+            return cacheDefaults.get().cacheResolverFactory().newInstance();
+        }
+
+        return DEFAULT_FACTORY;
+    }
 
 	public static Optional<CacheDefaults> getCacheDefaults(Class clz) {
 		Annotation annotation = clz.getAnnotation(CacheDefaults.class);

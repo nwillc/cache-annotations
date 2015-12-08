@@ -21,6 +21,7 @@ import com.github.nwillc.contracts.UtilityClassContract;
 import org.junit.Test;
 
 import javax.cache.annotation.CacheDefaults;
+import javax.cache.annotation.CacheResolverFactory;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,15 +39,41 @@ public class UtilsTest extends UtilityClassContract {
 		assertThat(Utils.getCacheDefaults(getClass()).isPresent()).isFalse();
 	}
 
-	@Test
-	public void shouldReturnCacheDefaults() throws Exception {
-		Optional<CacheDefaults> cacheDefaults = Utils.getCacheDefaults(Foo.class);
-		assertThat(cacheDefaults.isPresent()).isTrue();
-		assertThat(cacheDefaults.get().cacheName()).isEqualTo(CACHE_NAME);
-	}
+    @Test
+    public void testGetCacheResolverFactoryDefault() throws Exception {
+        CacheResolverFactory cacheResolverFactory = Utils.getCacheResolverFactory(CacheResolverFactory.class, String.class);
 
-	@CacheDefaults(cacheName = CACHE_NAME)
+        assertThat(cacheResolverFactory).isNotNull();
+        assertThat(cacheResolverFactory).isInstanceOf(ResolverFactory.class);
+    }
+
+    @Test
+    public void testGetCacheResolverFactoryFromClass() throws Exception {
+        CacheResolverFactory cacheResolverFactory = Utils.getCacheResolverFactory(CacheResolverFactory.class, Foo.class);
+
+        assertThat(cacheResolverFactory).isNotNull();
+        assertThat(cacheResolverFactory).isInstanceOf(SubResolverFactory.class);
+    }
+
+    @Test
+    public void testGetCacheResolverFactoryFromMethod() throws Exception {
+        CacheResolverFactory cacheResolverFactory = Utils.getCacheResolverFactory(SubResolverFactory.class, String.class);
+
+        assertThat(cacheResolverFactory).isNotNull();
+        assertThat(cacheResolverFactory).isInstanceOf(SubResolverFactory.class);
+    }
+
+    @Test
+    public void testGetCacheDefaults() throws Exception {
+        Optional<CacheDefaults> cacheDefaults = Utils.getCacheDefaults(Foo.class);
+        assertThat(cacheDefaults.isPresent()).isTrue();
+        assertThat(cacheDefaults.get().cacheName()).isEqualTo(CACHE_NAME);
+    }
+
+    @CacheDefaults(cacheName = CACHE_NAME, cacheResolverFactory = SubResolverFactory.class)
 	class Foo {
 
 	}
+
+    static class SubResolverFactory extends ResolverFactory {}
 }

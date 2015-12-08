@@ -16,19 +16,29 @@
 
 package com.github.nwillc.cache.annotation.aspects;
 
+import com.github.nwillc.cache.annotation.InvocationContext;
+import com.github.nwillc.cache.annotation.Utils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 
 import javax.cache.Cache;
-import javax.cache.Caching;
 import javax.cache.annotation.CacheRemoveAll;
+import javax.cache.annotation.CacheResolver;
+import javax.cache.annotation.CacheResolverFactory;
 
 @Aspect
-public class RemoveAll {
+public class RemoveAll extends CacheAspect {
 	@Around("execution(* *(..)) && @annotation(cacheRemoveAll)")
 	public Object get(ProceedingJoinPoint joinPoint, CacheRemoveAll cacheRemoveAll) throws Throwable {
-        Cache<Object, Object> cache = Caching.getCachingProvider().getCacheManager().getCache(cacheRemoveAll.cacheName());
+        Cache cache = getCacheRegistry().get(cacheRemoveAll);
+
+        if (cache == null) {
+            CacheResolverFactory cacheResolverFactory = Utils.getCacheResolverFactory(cacheRemoveAll.cacheResolverFactory(), joinPoint.getTarget().getClass());
+            CacheResolver cacheResolver = cacheResolverFactory.getCacheResolver(null);
+            cache = cacheResolver.resolveCache(new InvocationContext<>(null, null, cacheRemoveAll, cacheRemoveAll.cacheName(), null, joinPoint.getTarget()));
+            getCacheRegistry().put(cacheRemoveAll, cache);
+        }
         cache.clear();
         return joinPoint.proceed();
 	}
