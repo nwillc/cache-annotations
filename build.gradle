@@ -57,7 +57,8 @@ dependencies {
             'com.github.nwillc:simplecache:1.0.0'
 
     testCompile "junit:junit:4.12",
-            "com.github.nwillc:contracts:1.7.1"
+            'org.assertj:assertj-core:3.2.0',
+            'org.mockito:mockito-core:2.0.31-beta'
 
 }
 

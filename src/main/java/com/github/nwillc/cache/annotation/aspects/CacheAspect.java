@@ -30,7 +30,7 @@ public class CacheAspect {
 	protected Cache<Object, Object> getCache(Annotation key, ProceedingJoinPoint pjp, CacheAnnotationType cat) throws IllegalAccessException, InstantiationException {
 		Cache<Object, Object> cache = cacheRegistry.get(key);
 		if (cache == null) {
-			InvocationContext invocationContext = new InvocationContext<>(pjp, key, cat);
+			InvocationContext invocationContext = new InvocationContext<>(pjp, key, cat, null);
 			cache = cacheRegistry.register(key, invocationContext, cat);
 		}
 		return cache;

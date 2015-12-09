@@ -35,7 +35,6 @@ public class CacheRegistry {
     }
 
     public Cache<Object,Object> get(Annotation key) {
-
         Cache<Object,Object> cache = registry.get(key);
         if (cache != null && cache.isClosed()) {
             cache = null;

@@ -22,7 +22,9 @@ import org.aspectj.lang.reflect.MethodSignature;
 import javax.cache.annotation.CacheMethodDetails;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class MethodDetails<A extends Annotation> implements CacheMethodDetails<A> {
     private final Method method;
@@ -31,18 +33,10 @@ public class MethodDetails<A extends Annotation> implements CacheMethodDetails<A
 	private final String cacheName;
 
     public MethodDetails(ProceedingJoinPoint joinPoint, A cacheAnnotation, CacheAnnotationType cat) {
-        this((MethodSignature)joinPoint.getSignature(), cacheAnnotation, cat.cacheName(cacheAnnotation, null));
-    }
-
-    public MethodDetails(MethodSignature ms, A cacheAnnotation, String cacheName) {
-        this(null, ms.getMethod(), cacheAnnotation, cacheName);
-    }
-
-	public MethodDetails(Set<Annotation> annotations, Method method, A cacheAnnotation, String cacheName) {
-		this.annotations = annotations;
-		this.method = method;
+        method = ((MethodSignature)joinPoint.getSignature()).getMethod();
+		this.annotations = Arrays.stream(method.getDeclaredAnnotations()).collect(Collectors.toSet()) ;
 		this.cacheAnnotation = cacheAnnotation;
-		this.cacheName = cacheName;
+		this.cacheName = cat.cacheName(cacheAnnotation, joinPoint.getTarget());
 	}
 
 	@Override

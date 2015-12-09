@@ -18,51 +18,37 @@ package com.github.nwillc.cache.annotation;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
-import org.junit.Before;
 import org.junit.Test;
 
-import javax.cache.Cache;
-import javax.cache.CacheManager;
-import javax.cache.Caching;
-import javax.cache.annotation.CachePut;
-import javax.cache.configuration.MutableConfiguration;
+import javax.cache.annotation.CacheKey;
+import javax.cache.annotation.CacheValue;
 import java.lang.reflect.Method;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class ResolverTest {
-    private static final String CACHE_NAME = "foo";
-    private Resolver resolver;
-    private InvocationContext<CachePut> context;
+public class InvocationParameterTest {
 
-    @Before
-    public void setUp() throws Exception {
-        resolver = new Resolver();
-        Method method = getClass().getMethods()[0];
+    @Test
+    public void testConstructor() throws Exception {
+        Method method = Simple.class.getDeclaredMethods()[0];
         MethodSignature methodSignature = mock(MethodSignature.class);
         when(methodSignature.getMethod()).thenReturn(method);
         ProceedingJoinPoint pjp = mock(ProceedingJoinPoint.class);
         when(pjp.getSignature()).thenReturn(methodSignature);
-        CachePut cachePut = mock(CachePut.class);
-        when(cachePut.cacheName()).thenReturn(CACHE_NAME);
-        context = new InvocationContext<>(pjp,cachePut,CacheAnnotationType.PUT, null);
+        Object[] args = new Object[3];
+        args[0] = "foo";
+        args[1] = 1L;
+        args[2] = "bar";
+        when(pjp.getArgs()).thenReturn(args);
+
+        InvocationParameter[] invocationParameters = InvocationParameter.getParameters(pjp);
+        assertThat(invocationParameters).isNotNull();
+        assertThat(invocationParameters).hasSize(2);
     }
 
-    @Test
-    public void testUnknownCache() throws Exception {
-        Cache<Object, Object> cache = resolver.resolveCache(context);
-        assertThat(cache).isNull();
-    }
-
-    @Test
-    public void testKnowCache() throws Exception {
-        CacheManager cacheManager = Caching.getCachingProvider().getCacheManager();
-        cacheManager.createCache(CACHE_NAME, new MutableConfiguration<>());
-        Cache<Object, Object> cache = resolver.resolveCache(context);
-
-        assertThat(cache).isNotNull();
-        cacheManager.destroyCache(CACHE_NAME);
+    public static class Simple<P extends String> {
+        public void method(@CacheKey P str, @CacheValue Long value, String noise) {}
     }
 }

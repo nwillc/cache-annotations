@@ -29,7 +29,7 @@ import java.util.Optional;
 public enum CacheAnnotationType {
     PUT {
         @Override
-        public String cacheName(Annotation a, Object target) {
+        public String cacheName(Annotation a) {
             return ((CachePut) a).cacheName();
         }
 
@@ -40,7 +40,7 @@ public enum CacheAnnotationType {
     },
     REMOVE {
         @Override
-        public String cacheName(Annotation a, Object target) {
+        public String cacheName(Annotation a) {
             return ((CacheRemove)a).cacheName();
         }
 
@@ -51,7 +51,7 @@ public enum CacheAnnotationType {
     },
     REMOVE_ALL {
         @Override
-        public String cacheName(Annotation a, Object target) {
+        public String cacheName(Annotation a) {
             return ((CacheRemoveAll)a).cacheName();
         }
 
@@ -62,7 +62,7 @@ public enum CacheAnnotationType {
     },
     RESULT {
         @Override
-        public String cacheName(Annotation a, Object target) {
+        public String cacheName(Annotation a) {
             return ((CacheResult)a).cacheName();
         }
 
@@ -72,8 +72,20 @@ public enum CacheAnnotationType {
         }
     };
 
-    abstract public String cacheName(Annotation a, Object target);
+    abstract public String cacheName(Annotation a);
     abstract protected Class<? extends CacheResolverFactory> cacheResolverFactory(Annotation a);
+
+    public String cacheName(Annotation a, Object target) {
+        String cacheName = cacheName(a);
+        if (!cacheName.equals("")) {
+            return cacheName;
+        }
+        Optional<CacheDefaults> cacheDefaults = CacheAnnotationType.getCacheDefaults(target.getClass());
+        if (cacheDefaults.isPresent() && !cacheDefaults.get().cacheName().equals("")) {
+            return cacheDefaults.get().cacheName();
+        }
+        return null;
+    }
 
     public Class<? extends CacheResolverFactory> cacheResolverFactory(Annotation a, Object target) {
         Class<? extends CacheResolverFactory> cacheResolverFactory = cacheResolverFactory(a);
@@ -85,9 +97,9 @@ public enum CacheAnnotationType {
             return cacheDefaults.get().cacheResolverFactory();
         }
         return ResolverFactory.class;
-    };
+    }
 
-    public static Optional<CacheDefaults> getCacheDefaults(Class clz) {
+    protected static Optional<CacheDefaults> getCacheDefaults(Class clz) {
         Annotation annotation = clz.getAnnotation(CacheDefaults.class);
         if (annotation instanceof CacheDefaults) {
             CacheDefaults cacheDefaults = (CacheDefaults)annotation;
