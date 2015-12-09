@@ -16,7 +16,6 @@
 
 package com.github.nwillc.cache.annotation.aspects;
 
-import com.github.nwillc.cache.annotation.InvocationContext;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -32,12 +31,7 @@ public class Put extends CacheAspect {
 	@Around("execution(* *(..)) && @annotation(cachePut)")
 	public Object put(ProceedingJoinPoint joinPoint, CachePut cachePut) throws Throwable {
 		Object result = joinPoint.proceed();
-        Cache<Object, Object> cache = getCacheRegistry().get(cachePut);
-
-        if (cache == null) {
-            InvocationContext<CachePut> invocationContext = new InvocationContext<>(joinPoint, cachePut, PUT);
-            cache = getCacheRegistry().register(cachePut, invocationContext, PUT);
-        }
+		Cache<Object, Object> cache = getCache(cachePut, joinPoint, PUT);
 
 		Object[] args = joinPoint.getArgs();
 		cache.put(args[0], args[1]);

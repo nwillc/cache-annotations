@@ -16,38 +16,29 @@
 
 package com.github.nwillc.cache.annotation.aspects;
 
-import com.github.nwillc.cache.annotation.InvocationContext;
-import com.github.nwillc.cache.annotation.Utils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 
 import javax.cache.Cache;
-import javax.cache.annotation.CacheResolver;
-import javax.cache.annotation.CacheResolverFactory;
 import javax.cache.annotation.CacheResult;
+
+import static com.github.nwillc.cache.annotation.aspects.CacheAspect.CacheAnnotationType.RESULT;
 
 @Aspect
 public class Result extends CacheAspect {
 	@Around("execution(* *(..)) && @annotation(cacheResult)")
 	public Object get(ProceedingJoinPoint joinPoint, CacheResult cacheResult) throws Throwable {
-        Cache cache = getCacheRegistry().get(cacheResult);
-
-        if (cache == null) {
-            CacheResolverFactory cacheResolverFactory = Utils.getCacheResolverFactory(cacheResult.cacheResolverFactory(), joinPoint.getTarget().getClass());
-            CacheResolver cacheResolver = cacheResolverFactory.getCacheResolver(null);
-            cache = cacheResolver.resolveCache(new InvocationContext<>(null, null, cacheResult, cacheResult.cacheName(), null, joinPoint.getTarget()));
-            getCacheRegistry().put(cacheResult, cache);
-        }
-        Object[] args = joinPoint.getArgs();
-        Object value = cache.get(args[0]);
-        if (value != null) {
-           return value;
-        }
-        value = joinPoint.proceed();
-        if (value != null) {
-            cache.put(args[0], value);
-        }
+		Cache<Object, Object> cache = getCache(cacheResult, joinPoint, RESULT);
+		Object[] args = joinPoint.getArgs();
+		Object value = cache.get(args[0]);
+		if (value != null) {
+			return value;
+		}
+		value = joinPoint.proceed();
+		if (value != null) {
+			cache.put(args[0], value);
+		}
 		return value;
 	}
 }
