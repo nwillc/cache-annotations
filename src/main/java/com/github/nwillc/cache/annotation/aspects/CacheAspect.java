@@ -16,24 +16,13 @@
 
 package com.github.nwillc.cache.annotation.aspects;
 
+import com.github.nwillc.cache.annotation.CacheAnnotationType;
 import com.github.nwillc.cache.annotation.CacheRegistry;
 import com.github.nwillc.cache.annotation.InvocationContext;
-import com.github.nwillc.cache.annotation.Resolver;
-import com.github.nwillc.cache.annotation.ResolverFactory;
-import com.github.nwillc.cache.annotation.Utils;
 import org.aspectj.lang.ProceedingJoinPoint;
 
 import javax.cache.Cache;
-import javax.cache.annotation.CacheDefaults;
-import javax.cache.annotation.CachePut;
-import javax.cache.annotation.CacheRemove;
-import javax.cache.annotation.CacheRemoveAll;
-import javax.cache.annotation.CacheResolverFactory;
-import javax.cache.annotation.CacheResult;
 import java.lang.annotation.Annotation;
-import java.util.Optional;
-
-import static com.github.nwillc.cache.annotation.aspects.CacheAspect.CacheAnnotationType.PUT;
 
 public class CacheAspect {
 	private final CacheRegistry cacheRegistry = CacheRegistry.getInstance();
@@ -47,65 +36,4 @@ public class CacheAspect {
 		return cache;
 	}
 
-	public enum CacheAnnotationType {
-		PUT {
-			@Override
-			public String cacheName(Annotation a, Object target) {
-				return ((CachePut) a).cacheName();
-			}
-
-			@Override
-			public Class<? extends CacheResolverFactory> cacheResolverFactory(Annotation a) {
-				return ((CachePut) a).cacheResolverFactory();
-			}
-		},
-		REMOVE {
-			@Override
-			public String cacheName(Annotation a, Object target) {
-				return ((CacheRemove)a).cacheName();
-			}
-
-			@Override
-			public Class<? extends CacheResolverFactory> cacheResolverFactory(Annotation a) {
-				return ((CacheRemove)a).cacheResolverFactory();
-			}
-		},
-		REMOVE_ALL {
-			@Override
-			public String cacheName(Annotation a, Object target) {
-				return ((CacheRemoveAll)a).cacheName();
-			}
-
-			@Override
-			public Class<? extends CacheResolverFactory> cacheResolverFactory(Annotation a) {
-				return ((CacheRemoveAll)a).cacheResolverFactory();
-			}
-		},
-		RESULT {
-			@Override
-			public String cacheName(Annotation a, Object target) {
-				return ((CacheResult)a).cacheName();
-			}
-
-			@Override
-			public Class<? extends CacheResolverFactory> cacheResolverFactory(Annotation a) {
-				return ((CacheResult)a).cacheResolverFactory();
-			}
-		};
-
-		abstract public String cacheName(Annotation a, Object target);
-		abstract protected Class<? extends CacheResolverFactory> cacheResolverFactory(Annotation a);
-
-		public Class<? extends CacheResolverFactory> cacheResolverFactory(Annotation a, Object target) {
-			Class<? extends CacheResolverFactory> cacheResolverFactory = cacheResolverFactory(a);
-			if (!cacheResolverFactory.equals(CacheResolverFactory.class)) {
-				return cacheResolverFactory;
-			}
-			Optional<CacheDefaults> cacheDefaults = Utils.getCacheDefaults(target.getClass());
-			if (cacheDefaults.isPresent() && !cacheDefaults.get().cacheResolverFactory().equals(CacheResolverFactory.class)) {
-				return cacheDefaults.get().cacheResolverFactory();
-			}
-			return ResolverFactory.class;
-		};
-	}
 }

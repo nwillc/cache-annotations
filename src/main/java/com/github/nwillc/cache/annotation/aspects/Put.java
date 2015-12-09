@@ -23,7 +23,7 @@ import org.aspectj.lang.annotation.Aspect;
 import javax.cache.Cache;
 import javax.cache.annotation.CachePut;
 
-import static com.github.nwillc.cache.annotation.aspects.CacheAspect.CacheAnnotationType.PUT;
+import static com.github.nwillc.cache.annotation.CacheAnnotationType.PUT;
 
 @Aspect
 public class Put extends CacheAspect {

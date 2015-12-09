@@ -23,8 +23,7 @@ import org.aspectj.lang.annotation.Aspect;
 import javax.cache.Cache;
 import javax.cache.annotation.CacheRemove;
 
-import static com.github.nwillc.cache.annotation.aspects.CacheAspect.CacheAnnotationType.PUT;
-import static com.github.nwillc.cache.annotation.aspects.CacheAspect.CacheAnnotationType.REMOVE;
+import static com.github.nwillc.cache.annotation.CacheAnnotationType.REMOVE;
 
 @Aspect
 public class Remove extends CacheAspect {

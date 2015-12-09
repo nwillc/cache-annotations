@@ -23,7 +23,7 @@ import org.aspectj.lang.annotation.Aspect;
 import javax.cache.Cache;
 import javax.cache.annotation.CacheRemoveAll;
 
-import static com.github.nwillc.cache.annotation.aspects.CacheAspect.CacheAnnotationType.REMOVE_ALL;
+import static com.github.nwillc.cache.annotation.CacheAnnotationType.REMOVE_ALL;
 
 @Aspect
 public class RemoveAll extends CacheAspect {

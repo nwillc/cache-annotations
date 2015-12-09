@@ -23,7 +23,7 @@ import org.aspectj.lang.annotation.Aspect;
 import javax.cache.Cache;
 import javax.cache.annotation.CacheResult;
 
-import static com.github.nwillc.cache.annotation.aspects.CacheAspect.CacheAnnotationType.RESULT;
+import static com.github.nwillc.cache.annotation.CacheAnnotationType.RESULT;
 
 @Aspect
 public class Result extends CacheAspect {

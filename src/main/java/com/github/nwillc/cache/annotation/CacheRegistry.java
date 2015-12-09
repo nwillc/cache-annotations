@@ -16,8 +16,6 @@
 
 package com.github.nwillc.cache.annotation;
 
-import com.github.nwillc.cache.annotation.aspects.CacheAspect;
-
 import javax.cache.Cache;
 import javax.cache.annotation.CacheResolver;
 import javax.cache.annotation.CacheResolverFactory;
@@ -45,9 +43,9 @@ public class CacheRegistry {
         return cache;
     }
 
-    public Cache<Object,Object> register(Annotation key, InvocationContext invocationContext, CacheAspect.CacheAnnotationType cat)
+    public Cache<Object,Object> register(Annotation key, InvocationContext invocationContext, CacheAnnotationType cat)
             throws InstantiationException, IllegalAccessException {
-        CacheResolverFactory cacheResolverFactory = Utils.getCacheResolverFactory(cat.cacheResolverFactory(invocationContext.getCacheAnnotation(),invocationContext.getTarget()), invocationContext.getTarget().getClass());
+        CacheResolverFactory cacheResolverFactory =  cat.cacheResolverFactory(key, invocationContext.getTarget()).newInstance();
         CacheResolver cacheResolver = cacheResolverFactory.getCacheResolver(invocationContext);
         Cache<Object,Object> cache = cacheResolver.resolveCache(invocationContext);
         registry.put(key, cache);
