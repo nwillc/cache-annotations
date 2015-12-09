@@ -51,7 +51,7 @@ public class CacheAspect {
 
 			@Override
 			public Class<? extends CacheResolverFactory> cacheResolverFactory(Annotation a, Object target) {
-				return ((CachePut) a).cacheResolverFactory();
+				return  ((CachePut)a).cacheResolverFactory();
 			}
 		},
 		REMOVE {

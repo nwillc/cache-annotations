@@ -32,7 +32,6 @@ public class Put extends CacheAspect {
 	public Object put(ProceedingJoinPoint joinPoint, CachePut cachePut) throws Throwable {
 		Object result = joinPoint.proceed();
 		Cache<Object, Object> cache = getCache(cachePut, joinPoint, PUT);
-
 		Object[] args = joinPoint.getArgs();
 		cache.put(args[0], args[1]);
 		return result;
