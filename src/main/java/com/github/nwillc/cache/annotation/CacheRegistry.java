@@ -47,7 +47,7 @@ public class CacheRegistry {
 
     public Cache<Object,Object> register(Annotation key, InvocationContext invocationContext, CacheAspect.CacheAnnotationType cat)
             throws InstantiationException, IllegalAccessException {
-        CacheResolverFactory cacheResolverFactory = Utils.getCacheResolverFactory(cat.cacheResolverFactory(invocationContext.getCacheAnnotation(),null), invocationContext.getTarget().getClass());
+        CacheResolverFactory cacheResolverFactory = Utils.getCacheResolverFactory(cat.cacheResolverFactory(invocationContext.getCacheAnnotation(),invocationContext.getTarget()), invocationContext.getTarget().getClass());
         CacheResolver cacheResolver = cacheResolverFactory.getCacheResolver(invocationContext);
         Cache<Object,Object> cache = cacheResolver.resolveCache(invocationContext);
         registry.put(key, cache);
