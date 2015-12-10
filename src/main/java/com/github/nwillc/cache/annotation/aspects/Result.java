@@ -16,13 +16,12 @@
 
 package com.github.nwillc.cache.annotation.aspects;
 
-import com.github.nwillc.cache.annotation.GeneratedKey;
+import com.github.nwillc.cache.annotation.ContextRegistry;
 import com.github.nwillc.cache.annotation.KeyInvocationContext;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 
-import javax.cache.Cache;
 import javax.cache.annotation.CacheResult;
 import javax.cache.annotation.GeneratedCacheKey;
 
@@ -32,16 +31,16 @@ import static com.github.nwillc.cache.annotation.AnnotationType.RESULT;
 public class Result extends CacheAspect {
     @Around("execution(* *(..)) && @annotation(cacheResult)")
     public Object get(ProceedingJoinPoint joinPoint, CacheResult cacheResult) throws Throwable {
-        Cache<GeneratedCacheKey, Object> cache = getCache(cacheResult, joinPoint, RESULT);
+        ContextRegistry.Context context = getContext(cacheResult, joinPoint, RESULT);
         KeyInvocationContext<CacheResult> keyInvocationContext = new KeyInvocationContext<>(joinPoint, cacheResult, RESULT);
-        GeneratedCacheKey key = new GeneratedKey(keyInvocationContext.getKeyParameters());
-        Object value = cache.get(key);
+        GeneratedCacheKey key = context.getKeyGenerator().generateCacheKey(keyInvocationContext);
+        Object value = context.getCache().get(key);
         if (value != null) {
             return value;
         }
         value = joinPoint.proceed();
         if (value != null) {
-            cache.put(key, value);
+            context.getCache().put(key, value);
         }
         return value;
     }

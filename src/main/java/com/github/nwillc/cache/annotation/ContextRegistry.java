@@ -17,6 +17,7 @@
 package com.github.nwillc.cache.annotation;
 
 import javax.cache.Cache;
+import javax.cache.annotation.CacheKeyGenerator;
 import javax.cache.annotation.CacheResolver;
 import javax.cache.annotation.CacheResolverFactory;
 import javax.cache.annotation.GeneratedCacheKey;
@@ -24,34 +25,49 @@ import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class CacheRegistry {
-    private final Map<Annotation, Cache<GeneratedCacheKey, Object>> registry = new ConcurrentHashMap<>();
+public final class ContextRegistry {
+    private final Map<Annotation, Context> registry = new ConcurrentHashMap<>();
 
-    public static CacheRegistry getInstance() {
+    public static ContextRegistry getInstance() {
         return Instance.instance;
     }
 
-    public Cache<GeneratedCacheKey, Object> get(Annotation key) {
-        Cache<GeneratedCacheKey, Object> cache = registry.get(key);
-        if (cache != null && cache.isClosed()) {
-            cache = null;
-        }
-        return cache;
+    public Context getContext(Annotation key) {
+        return registry.get(key);
     }
 
-    public Cache<GeneratedCacheKey, Object> register(Annotation key,
+    public Context register(Annotation key,
                                           InvocationContext<? extends Annotation> invocationContext, AnnotationType cat)
             throws InstantiationException, IllegalAccessException {
         CacheResolverFactory cacheResolverFactory = cat.cacheResolverFactory(key, invocationContext.getTarget()).newInstance();
         CacheResolver cacheResolver = cacheResolverFactory.getCacheResolver(invocationContext);
         Cache<GeneratedCacheKey, Object> cache = cacheResolver.resolveCache(invocationContext);
-        registry.put(key, cache);
-        return cache;
+        Class<? extends CacheKeyGenerator> aClass = cat.cacheKeyGenerator(key, invocationContext.getTarget());
+        CacheKeyGenerator generator = aClass == null ? null : aClass.newInstance();
+        Context context = new Context(cache,generator);
+        registry.put(key, context);
+        return context;
     }
 
     private static class Instance {
-        private static final CacheRegistry instance = new CacheRegistry();
+        private static final ContextRegistry instance = new ContextRegistry();
     }
 
+    public static class Context {
+        private final Cache<GeneratedCacheKey, Object> cache;
+        private final CacheKeyGenerator keyGenerator;
 
+        public Context(Cache<GeneratedCacheKey, Object> cache, CacheKeyGenerator keyGenerator) {
+            this.cache = cache;
+            this.keyGenerator = keyGenerator;
+        }
+
+        public Cache<GeneratedCacheKey, Object> getCache() {
+            return cache;
+        }
+
+        public CacheKeyGenerator getKeyGenerator() {
+            return keyGenerator;
+        }
+    }
 }

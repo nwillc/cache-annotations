@@ -16,13 +16,12 @@
 
 package com.github.nwillc.cache.annotation.aspects;
 
+import com.github.nwillc.cache.annotation.ContextRegistry;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 
-import javax.cache.Cache;
 import javax.cache.annotation.CacheRemoveAll;
-import javax.cache.annotation.GeneratedCacheKey;
 
 import static com.github.nwillc.cache.annotation.AnnotationType.REMOVE_ALL;
 
@@ -30,8 +29,8 @@ import static com.github.nwillc.cache.annotation.AnnotationType.REMOVE_ALL;
 public class RemoveAll extends CacheAspect {
     @Around("execution(* *(..)) && @annotation(cacheRemoveAll)")
     public Object get(ProceedingJoinPoint joinPoint, CacheRemoveAll cacheRemoveAll) throws Throwable {
-        Cache<GeneratedCacheKey, Object> cache = getCache(cacheRemoveAll, joinPoint, REMOVE_ALL);
-        cache.clear();
+        ContextRegistry.Context context = getContext(cacheRemoveAll, joinPoint, REMOVE_ALL);
+        context.getCache().clear();
         return joinPoint.proceed();
     }
 }

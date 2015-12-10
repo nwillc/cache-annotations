@@ -18,6 +18,7 @@ package com.github.nwillc.cache.annotation;
 
 
 import javax.cache.annotation.CacheDefaults;
+import javax.cache.annotation.CacheKeyGenerator;
 import javax.cache.annotation.CachePut;
 import javax.cache.annotation.CacheRemove;
 import javax.cache.annotation.CacheRemoveAll;
@@ -27,6 +28,7 @@ import java.lang.annotation.Annotation;
 import java.util.Optional;
 
 public enum AnnotationType {
+
     PUT {
         @Override
         public String cacheName(Annotation a) {
@@ -36,6 +38,11 @@ public enum AnnotationType {
         @Override
         public Class<? extends CacheResolverFactory> cacheResolverFactory(Annotation a) {
             return ((CachePut) a).cacheResolverFactory();
+        }
+
+        @Override
+        protected Class<? extends CacheKeyGenerator> cacheKeyGenerator(Annotation a) {
+            return ((CachePut) a).cacheKeyGenerator();
         }
     },
     REMOVE {
@@ -48,6 +55,11 @@ public enum AnnotationType {
         public Class<? extends CacheResolverFactory> cacheResolverFactory(Annotation a) {
             return ((CacheRemove) a).cacheResolverFactory();
         }
+
+        @Override
+        protected Class<? extends CacheKeyGenerator> cacheKeyGenerator(Annotation a) {
+            return ((CacheRemove) a).cacheKeyGenerator();
+        }
     },
     REMOVE_ALL {
         @Override
@@ -58,6 +70,11 @@ public enum AnnotationType {
         @Override
         public Class<? extends CacheResolverFactory> cacheResolverFactory(Annotation a) {
             return ((CacheRemoveAll) a).cacheResolverFactory();
+        }
+
+        @Override
+        protected Class<? extends CacheKeyGenerator> cacheKeyGenerator(Annotation a) {
+           return null;
         }
     },
     RESULT {
@@ -70,20 +87,32 @@ public enum AnnotationType {
         public Class<? extends CacheResolverFactory> cacheResolverFactory(Annotation a) {
             return ((CacheResult) a).cacheResolverFactory();
         }
+
+        @Override
+        protected Class<? extends CacheKeyGenerator> cacheKeyGenerator(Annotation a) {
+            return ((CacheResult) a).cacheKeyGenerator();
+        }
     };
 
-    private static Optional<CacheDefaults> getCacheDefaults(Class clz) {
-        Annotation annotation = clz.getAnnotation(CacheDefaults.class);
-        if (annotation instanceof CacheDefaults) {
-            CacheDefaults cacheDefaults = (CacheDefaults) annotation;
-            return Optional.of(cacheDefaults);
-        }
-        return Optional.empty();
-    }
 
-    abstract public String cacheName(Annotation a);
-
+    abstract protected String cacheName(Annotation a);
     abstract protected Class<? extends CacheResolverFactory> cacheResolverFactory(Annotation a);
+    abstract protected Class<? extends CacheKeyGenerator> cacheKeyGenerator(Annotation a);
+
+    public Class<? extends CacheKeyGenerator> cacheKeyGenerator(Annotation a, Object target) {
+        Class<? extends CacheKeyGenerator> cacheKeyGenerator = cacheKeyGenerator(a);
+        if (cacheKeyGenerator == null) {
+            return null;
+        }
+        if (!cacheKeyGenerator.equals(CacheKeyGenerator.class)) {
+            return cacheKeyGenerator;
+        }
+        Optional<CacheDefaults> cacheDefaults = AnnotationType.getCacheDefaults(target.getClass());
+        if (cacheDefaults.isPresent() && !cacheDefaults.get().cacheKeyGenerator().equals(CacheKeyGenerator.class)) {
+            return cacheDefaults.get().cacheKeyGenerator();
+        }
+        return KeyGenerator.class;
+    }
 
     public String cacheName(Annotation a, Object target) {
         String cacheName = cacheName(a);
@@ -107,5 +136,14 @@ public enum AnnotationType {
             return cacheDefaults.get().cacheResolverFactory();
         }
         return ResolverFactory.class;
+    }
+
+    private static Optional<CacheDefaults> getCacheDefaults(Class clz) {
+        Annotation annotation = clz.getAnnotation(CacheDefaults.class);
+        if (annotation instanceof CacheDefaults) {
+            CacheDefaults cacheDefaults = (CacheDefaults) annotation;
+            return Optional.of(cacheDefaults);
+        }
+        return Optional.empty();
     }
 }

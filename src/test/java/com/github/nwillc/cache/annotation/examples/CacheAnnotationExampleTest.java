@@ -45,7 +45,7 @@ public class CacheAnnotationExampleTest {
 
     @After
     public void tearDown() throws Exception {
-        cache.close();
+        cache.clear();
     }
 
     @Test

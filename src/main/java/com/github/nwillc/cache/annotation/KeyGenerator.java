@@ -21,7 +21,7 @@ import javax.cache.annotation.CacheKeyInvocationContext;
 import javax.cache.annotation.GeneratedCacheKey;
 import java.lang.annotation.Annotation;
 
-class KeyGenerator implements CacheKeyGenerator {
+public class KeyGenerator implements CacheKeyGenerator {
     @Override
     public GeneratedCacheKey generateCacheKey(CacheKeyInvocationContext<? extends Annotation> cacheKeyInvocationContext) {
         return new GeneratedKey(cacheKeyInvocationContext.getKeyParameters());
