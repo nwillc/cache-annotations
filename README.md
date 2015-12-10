@@ -1,6 +1,7 @@
 Cache Annotations
 =================
-Implementation of JSR 107 cache annotations employing AspectJ aspects to weave in the caching. These annotations should
+Partial implementation of JSR 107 cache annotations employing AspectJ aspects to weave in the caching. Includes most
+of the basic functionality. Implemented as a learning experience. These annotations should
 work for any JSR 107 compliant implementation, however I've only tested them with my own `SimpleCache` implementation.
 
 A general note, adding caching without these annotations is pretty straight forward. These annotations, by their very
