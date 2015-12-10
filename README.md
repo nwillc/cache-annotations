@@ -4,7 +4,7 @@ Implementation of JSR 107 cache annotations employing AspectJ aspects to weave i
 work for any JSR 107 compliant implementation, however I've only tested them with my own `SimpleCache` implementation.
 
 A general note, adding caching without these annotations is pretty straight forward. These annotations, by their very
-nature introduce overhead. Every affected method call requires a certain about of runtime investigation employing
+nature introduce overhead. Every affected method call requires a certain amount of runtime investigation employing
 reflection.  Usually caching is added for speed, so I'm not clear on the logic of avoiding some pretty straight forward
 code at the cost of continuous overhead.
 
