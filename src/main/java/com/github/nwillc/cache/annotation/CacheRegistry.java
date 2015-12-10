@@ -23,35 +23,38 @@ import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CacheRegistry {
-    private static final CacheRegistry ourInstance = new CacheRegistry();
-    private final Map<Annotation, Cache<Object,Object>> registry = new ConcurrentHashMap<>();
+public final class CacheRegistry {
+    private final Map<Annotation, Cache<Object, Object>> registry = new ConcurrentHashMap<>();
 
     public static CacheRegistry getInstance() {
-        return ourInstance;
+        return Instance.instance;
     }
 
-    private CacheRegistry() {
-    }
-
-    public Cache<Object,Object> get(Annotation key) {
-        Cache<Object,Object> cache = registry.get(key);
+    public Cache<Object, Object> get(Annotation key) {
+        Cache<Object, Object> cache = registry.get(key);
         if (cache != null && cache.isClosed()) {
             cache = null;
         }
         return cache;
     }
 
-    public Cache<Object,Object> register(Annotation key, InvocationContext invocationContext, CacheAnnotationType cat)
+    public Cache<Object, Object> register(Annotation key,
+                                          InvocationContext<? extends Annotation> invocationContext, CacheAnnotationType cat)
             throws InstantiationException, IllegalAccessException {
-        CacheResolverFactory cacheResolverFactory =  cat.cacheResolverFactory(key, invocationContext.getTarget()).newInstance();
+        CacheResolverFactory cacheResolverFactory = cat.cacheResolverFactory(key, invocationContext.getTarget()).newInstance();
         CacheResolver cacheResolver = cacheResolverFactory.getCacheResolver(invocationContext);
-        Cache<Object,Object> cache = cacheResolver.resolveCache(invocationContext);
+        Cache<Object, Object> cache = cacheResolver.resolveCache(invocationContext);
         registry.put(key, cache);
         return cache;
     }
 
-    public void put(Annotation key, Cache cache) {
+    public void put(Annotation key, Cache<Object, Object> cache) {
         registry.put(key, cache);
     }
+
+    private static class Instance {
+        private static final CacheRegistry instance = new CacheRegistry();
+    }
+
+
 }

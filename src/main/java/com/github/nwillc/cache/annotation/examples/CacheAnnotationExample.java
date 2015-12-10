@@ -27,14 +27,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 @CacheDefaults(cacheName = CacheAnnotationExample.CACHE_NAME)
-public class CacheAnnotationExample<K,V>  {
+public class CacheAnnotationExample<K, V> {
     public static final String CACHE_NAME = "example";
-	private Map<K,V> map = new HashMap<>();
+    private final Map<K, V> map = new HashMap<>();
 
-	@CachePut(cacheName = CACHE_NAME)
-	public void put(@CacheKey K key, @CacheValue V value) {
-		map.put(key, value);
-	}
+    @CachePut(cacheName = CACHE_NAME)
+    public void put(@CacheKey K key, @CacheValue V value) {
+        map.put(key, value);
+    }
 
     @CacheResult(cacheName = CACHE_NAME)
     public V get(K key) {
@@ -43,7 +43,7 @@ public class CacheAnnotationExample<K,V>  {
 
     @CacheRemove
     public V remove(K key) {
-       return map.remove(key);
+        return map.remove(key);
     }
 
     @CacheRemoveAll(cacheName = CACHE_NAME)
@@ -51,7 +51,7 @@ public class CacheAnnotationExample<K,V>  {
         map.clear();
     }
 
-	public Map<K, V> getMap() {
-		return map;
-	}
+    public Map<K, V> getMap() {
+        return map;
+    }
 }

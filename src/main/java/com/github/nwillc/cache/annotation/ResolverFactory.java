@@ -23,15 +23,15 @@ import javax.cache.annotation.CacheResult;
 import java.lang.annotation.Annotation;
 
 public class ResolverFactory implements CacheResolverFactory {
-	private Resolver resolver = new Resolver();
+    private final Resolver resolver = new Resolver();
 
-	@Override
-	public CacheResolver getCacheResolver(CacheMethodDetails<? extends Annotation> cacheMethodDetails) {
-		return resolver;
-	}
+    @Override
+    public CacheResolver getCacheResolver(CacheMethodDetails<? extends Annotation> cacheMethodDetails) {
+        return resolver;
+    }
 
-	@Override
-	public CacheResolver getExceptionCacheResolver(CacheMethodDetails<CacheResult> cacheMethodDetails) {
-		return null;
-	}
+    @Override
+    public CacheResolver getExceptionCacheResolver(CacheMethodDetails<CacheResult> cacheMethodDetails) {
+        return null;
+    }
 }

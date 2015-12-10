@@ -19,19 +19,22 @@ package com.github.nwillc.cache.annotation;
 import org.aspectj.lang.ProceedingJoinPoint;
 
 import javax.cache.annotation.CacheInvocationParameter;
+import javax.cache.annotation.CacheKey;
 import javax.cache.annotation.CacheKeyInvocationContext;
+import javax.cache.annotation.CacheValue;
 import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.List;
 
 public class KeyInvocationContext<A extends Annotation>
         extends InvocationContext<A> implements CacheKeyInvocationContext<A> {
     private final CacheInvocationParameter[] keyParameters;
     private final CacheInvocationParameter valueParameter;
 
-    public KeyInvocationContext(ProceedingJoinPoint pjp, A cacheAnnotation, CacheAnnotationType cat,
-            CacheInvocationParameter[] keyParameters, CacheInvocationParameter valueParameter) throws ClassNotFoundException {
+    public KeyInvocationContext(ProceedingJoinPoint pjp, A cacheAnnotation, CacheAnnotationType cat) throws ClassNotFoundException {
         super(pjp, cacheAnnotation, cat);
-        this.keyParameters = keyParameters;
-        this.valueParameter = valueParameter;
+        this.keyParameters = findKeyParameters();
+        this.valueParameter = findValueParameter();
     }
 
     @Override
@@ -42,5 +45,58 @@ public class KeyInvocationContext<A extends Annotation>
     @Override
     public CacheInvocationParameter getValueParameter() {
         return valueParameter;
+    }
+
+    private CacheInvocationParameter[] findKeyParameters() {
+        List<CacheInvocationParameter> noAnnotations = new ArrayList<>();
+        List<CacheInvocationParameter> keyAnnotations = new ArrayList<>();
+        List<CacheInvocationParameter> valAnnotations = new ArrayList<>();
+
+        for (CacheInvocationParameter parameter : getAllParameters()) {
+            boolean found = false;
+            for (Annotation annotation : parameter.getAnnotations()) {
+                if (annotation instanceof CacheKey) {
+                    keyAnnotations.add(parameter);
+                    found = true;
+                    break;
+                }
+                if (annotation instanceof CacheValue) {
+                    valAnnotations.add(parameter);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                noAnnotations.add(parameter);
+            }
+        }
+
+        if (keyAnnotations.size() > 0) {
+            CacheInvocationParameter[] result = new CacheInvocationParameter[keyAnnotations.size()];
+            return keyAnnotations.toArray(result);
+        }
+
+        if (valAnnotations.size() > 0) {
+            CacheInvocationParameter[] result = new CacheInvocationParameter[noAnnotations.size()];
+            return noAnnotations.toArray(result);
+        }
+
+        return getAllParameters();
+    }
+
+    private CacheInvocationParameter findValueParameter() {
+        if (getCacheAnnotationType() != CacheAnnotationType.PUT) {
+            return null;
+        }
+
+        for (CacheInvocationParameter parameter : getAllParameters()) {
+            for (Annotation annotation : parameter.getAnnotations()) {
+                if (annotation instanceof CacheValue) {
+                    return parameter;
+                }
+            }
+        }
+
+        return null;
     }
 }

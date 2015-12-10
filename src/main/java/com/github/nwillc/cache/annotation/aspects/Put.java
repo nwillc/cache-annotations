@@ -28,13 +28,13 @@ import static com.github.nwillc.cache.annotation.CacheAnnotationType.PUT;
 @Aspect
 public class Put extends CacheAspect {
 
-	@Around("execution(* *(..)) && @annotation(cachePut)")
-	public Object put(ProceedingJoinPoint joinPoint, CachePut cachePut) throws Throwable {
-		Object result = joinPoint.proceed();
-		Cache<Object, Object> cache = getCache(cachePut, joinPoint, PUT);
-		Object[] args = joinPoint.getArgs();
-		cache.put(args[0], args[1]);
-		return result;
-	}
+    @Around("execution(* *(..)) && @annotation(cachePut)")
+    public Object put(ProceedingJoinPoint joinPoint, CachePut cachePut) throws Throwable {
+        Object result = joinPoint.proceed();
+        Cache<Object, Object> cache = getCache(cachePut, joinPoint, PUT);
+        Object[] args = joinPoint.getArgs();
+        cache.put(args[0], args[1]);
+        return result;
+    }
 
 }

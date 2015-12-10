@@ -41,38 +41,48 @@ public enum CacheAnnotationType {
     REMOVE {
         @Override
         public String cacheName(Annotation a) {
-            return ((CacheRemove)a).cacheName();
+            return ((CacheRemove) a).cacheName();
         }
 
         @Override
         public Class<? extends CacheResolverFactory> cacheResolverFactory(Annotation a) {
-            return ((CacheRemove)a).cacheResolverFactory();
+            return ((CacheRemove) a).cacheResolverFactory();
         }
     },
     REMOVE_ALL {
         @Override
         public String cacheName(Annotation a) {
-            return ((CacheRemoveAll)a).cacheName();
+            return ((CacheRemoveAll) a).cacheName();
         }
 
         @Override
         public Class<? extends CacheResolverFactory> cacheResolverFactory(Annotation a) {
-            return ((CacheRemoveAll)a).cacheResolverFactory();
+            return ((CacheRemoveAll) a).cacheResolverFactory();
         }
     },
     RESULT {
         @Override
         public String cacheName(Annotation a) {
-            return ((CacheResult)a).cacheName();
+            return ((CacheResult) a).cacheName();
         }
 
         @Override
         public Class<? extends CacheResolverFactory> cacheResolverFactory(Annotation a) {
-            return ((CacheResult)a).cacheResolverFactory();
+            return ((CacheResult) a).cacheResolverFactory();
         }
     };
 
+    protected static Optional<CacheDefaults> getCacheDefaults(Class clz) {
+        Annotation annotation = clz.getAnnotation(CacheDefaults.class);
+        if (annotation instanceof CacheDefaults) {
+            CacheDefaults cacheDefaults = (CacheDefaults) annotation;
+            return Optional.of(cacheDefaults);
+        }
+        return Optional.empty();
+    }
+
     abstract public String cacheName(Annotation a);
+
     abstract protected Class<? extends CacheResolverFactory> cacheResolverFactory(Annotation a);
 
     public String cacheName(Annotation a, Object target) {
@@ -97,14 +107,5 @@ public enum CacheAnnotationType {
             return cacheDefaults.get().cacheResolverFactory();
         }
         return ResolverFactory.class;
-    }
-
-    protected static Optional<CacheDefaults> getCacheDefaults(Class clz) {
-        Annotation annotation = clz.getAnnotation(CacheDefaults.class);
-        if (annotation instanceof CacheDefaults) {
-            CacheDefaults cacheDefaults = (CacheDefaults)annotation;
-            return Optional.of(cacheDefaults);
-        }
-        return Optional.empty();
     }
 }

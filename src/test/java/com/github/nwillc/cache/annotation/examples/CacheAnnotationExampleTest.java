@@ -28,8 +28,8 @@ import javax.cache.configuration.MutableConfiguration;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CacheAnnotationExampleTest {
+    protected Cache<Long, String> cache;
     private CacheAnnotationExample<Long, String> cacheAnnotationExample;
-    protected Cache<Long,String> cache;
 
     @Before
     public void setUp() throws Exception {
@@ -48,13 +48,13 @@ public class CacheAnnotationExampleTest {
     }
 
     @Test
-	public void shouldCut() throws Exception {
-		assertThat(cache).isEmpty();
-		cacheAnnotationExample.put(1L, "foo");
-		assertThat(cacheAnnotationExample.getMap().get(1L)).isEqualTo("foo");
-		assertThat(cache).hasSize(1);
-		assertThat(cache.get(1L)).isEqualTo("foo");
-	}
+    public void shouldCut() throws Exception {
+        assertThat(cache).isEmpty();
+        cacheAnnotationExample.put(1L, "foo");
+        assertThat(cacheAnnotationExample.getMap().get(1L)).isEqualTo("foo");
+        assertThat(cache).hasSize(1);
+        assertThat(cache.get(1L)).isEqualTo("foo");
+    }
 
     @Test
     public void shouldGet() throws Exception {

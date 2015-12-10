@@ -15,8 +15,8 @@
  */
 
 /**
- *  This package of examples using the aspects is an artifact of wanting to test them with junit and gradle.
- *  For  JUnit tests to have test classes with the aspects woven in it seemed to need to have them in the
- *  main source. This entire package <b>is excluded</b> from the distribution binary jar however.
+ * This package of examples using the aspects is an artifact of wanting to test them with junit and gradle.
+ * For  JUnit tests to have test classes with the aspects woven in it seemed to need to have them in the
+ * main source. This entire package <b>is excluded</b> from the distribution binary jar however.
  */
 package com.github.nwillc.cache.annotation.examples;

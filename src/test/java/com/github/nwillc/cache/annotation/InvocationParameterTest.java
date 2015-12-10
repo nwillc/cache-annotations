@@ -49,6 +49,7 @@ public class InvocationParameterTest {
     }
 
     public static class Simple<P extends String> {
-        public void method(@CacheKey P str, @CacheValue Long value, String noise) {}
+        public void method(@CacheKey P str, @CacheValue Long value, String noise) {
+        }
     }
 }

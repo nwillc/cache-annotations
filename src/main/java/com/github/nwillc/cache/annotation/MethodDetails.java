@@ -28,18 +28,20 @@ import java.util.stream.Collectors;
 
 public class MethodDetails<A extends Annotation> implements CacheMethodDetails<A> {
     private final Method method;
-	private final Set<Annotation> annotations;
-	private final A cacheAnnotation;
-	private final String cacheName;
+    private final Set<Annotation> annotations;
+    private final A cacheAnnotation;
+    private final String cacheName;
+    private final CacheAnnotationType cacheAnnotationType;
 
     public MethodDetails(ProceedingJoinPoint joinPoint, A cacheAnnotation, CacheAnnotationType cat) {
-        method = ((MethodSignature)joinPoint.getSignature()).getMethod();
-		this.annotations = Arrays.stream(method.getDeclaredAnnotations()).collect(Collectors.toSet()) ;
-		this.cacheAnnotation = cacheAnnotation;
-		this.cacheName = cat.cacheName(cacheAnnotation, joinPoint.getTarget());
-	}
+        method = ((MethodSignature) joinPoint.getSignature()).getMethod();
+        this.annotations = Arrays.stream(method.getDeclaredAnnotations()).collect(Collectors.toSet());
+        this.cacheAnnotation = cacheAnnotation;
+        this.cacheName = cat.cacheName(cacheAnnotation, joinPoint.getTarget());
+        this.cacheAnnotationType = cat;
+    }
 
-	@Override
+    @Override
     public Method getMethod() {
         return method;
     }
@@ -57,5 +59,9 @@ public class MethodDetails<A extends Annotation> implements CacheMethodDetails<A
     @Override
     public String getCacheName() {
         return cacheName;
+    }
+
+    protected CacheAnnotationType getCacheAnnotationType() {
+        return cacheAnnotationType;
     }
 }

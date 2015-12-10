@@ -28,11 +28,11 @@ import static com.github.nwillc.cache.annotation.CacheAnnotationType.REMOVE;
 @Aspect
 public class Remove extends CacheAspect {
 
-	@Around("execution(* *(..)) && @annotation(cacheRemove)")
-	public Object get(ProceedingJoinPoint joinPoint, CacheRemove cacheRemove) throws Throwable {
-		Cache<Object, Object> cache = getCache(cacheRemove, joinPoint, REMOVE);
-		Object[] args = joinPoint.getArgs();
-		cache.remove(args[0]);
-		return joinPoint.proceed();
-	}
+    @Around("execution(* *(..)) && @annotation(cacheRemove)")
+    public Object get(ProceedingJoinPoint joinPoint, CacheRemove cacheRemove) throws Throwable {
+        Cache<Object, Object> cache = getCache(cacheRemove, joinPoint, REMOVE);
+        Object[] args = joinPoint.getArgs();
+        cache.remove(args[0]);
+        return joinPoint.proceed();
+    }
 }

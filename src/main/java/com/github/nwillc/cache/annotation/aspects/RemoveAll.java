@@ -27,10 +27,10 @@ import static com.github.nwillc.cache.annotation.CacheAnnotationType.REMOVE_ALL;
 
 @Aspect
 public class RemoveAll extends CacheAspect {
-	@Around("execution(* *(..)) && @annotation(cacheRemoveAll)")
-	public Object get(ProceedingJoinPoint joinPoint, CacheRemoveAll cacheRemoveAll) throws Throwable {
-		Cache<Object, Object> cache = getCache(cacheRemoveAll, joinPoint, REMOVE_ALL);
-		cache.clear();
-		return joinPoint.proceed();
-	}
+    @Around("execution(* *(..)) && @annotation(cacheRemoveAll)")
+    public Object get(ProceedingJoinPoint joinPoint, CacheRemoveAll cacheRemoveAll) throws Throwable {
+        Cache<Object, Object> cache = getCache(cacheRemoveAll, joinPoint, REMOVE_ALL);
+        cache.clear();
+        return joinPoint.proceed();
+    }
 }
