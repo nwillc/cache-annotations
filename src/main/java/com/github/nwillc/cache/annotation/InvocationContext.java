@@ -27,7 +27,7 @@ public class InvocationContext<A extends Annotation>
     private final Object target;
     private final CacheInvocationParameter[] allParameters;
 
-    public InvocationContext(ProceedingJoinPoint pjp, A cacheAnnotation, AnnotationType cat) throws ClassNotFoundException {
+    public InvocationContext(ProceedingJoinPoint pjp, A cacheAnnotation, AnnotationType cat) {
         super(pjp, cacheAnnotation, cat);
         this.allParameters = InvocationParameter.getParameters(pjp);
         this.target = pjp.getTarget();

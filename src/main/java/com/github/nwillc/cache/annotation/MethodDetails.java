@@ -33,7 +33,7 @@ public class MethodDetails<A extends Annotation> implements CacheMethodDetails<A
     private final String cacheName;
     private final AnnotationType annotationType;
 
-    public MethodDetails(ProceedingJoinPoint joinPoint, A cacheAnnotation, AnnotationType cat) {
+    MethodDetails(ProceedingJoinPoint joinPoint, A cacheAnnotation, AnnotationType cat) {
         method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         this.annotations = Arrays.stream(method.getDeclaredAnnotations()).collect(Collectors.toSet());
         this.cacheAnnotation = cacheAnnotation;

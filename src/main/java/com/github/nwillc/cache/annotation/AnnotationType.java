@@ -72,7 +72,7 @@ public enum AnnotationType {
         }
     };
 
-    protected static Optional<CacheDefaults> getCacheDefaults(Class clz) {
+    private static Optional<CacheDefaults> getCacheDefaults(Class clz) {
         Annotation annotation = clz.getAnnotation(CacheDefaults.class);
         if (annotation instanceof CacheDefaults) {
             CacheDefaults cacheDefaults = (CacheDefaults) annotation;

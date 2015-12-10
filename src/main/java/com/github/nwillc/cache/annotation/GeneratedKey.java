@@ -41,9 +41,7 @@ public class GeneratedKey implements GeneratedCacheKey {
 
         GeneratedKey that = (GeneratedKey) o;
 
-        // Probably incorrect - comparing Object[] arrays with Arrays.equals
-        return Arrays.equals(keyParts, that.keyParts);
-
+        return Arrays.deepEquals(keyParts, that.keyParts);
     }
 
     @Override

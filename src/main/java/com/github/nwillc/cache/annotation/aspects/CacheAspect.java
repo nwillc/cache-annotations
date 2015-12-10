@@ -25,10 +25,10 @@ import javax.cache.Cache;
 import javax.cache.annotation.GeneratedCacheKey;
 import java.lang.annotation.Annotation;
 
-public class CacheAspect {
+class CacheAspect {
     private final CacheRegistry cacheRegistry = CacheRegistry.getInstance();
 
-    protected Cache<GeneratedCacheKey, Object> getCache(Annotation key, ProceedingJoinPoint pjp, AnnotationType cat) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+    Cache<GeneratedCacheKey, Object> getCache(Annotation key, ProceedingJoinPoint pjp, AnnotationType cat) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         Cache<GeneratedCacheKey, Object> cache = cacheRegistry.get(key);
         if (cache == null) {
             InvocationContext<? extends Annotation> invocationContext = new InvocationContext<>(pjp, key, cat);
