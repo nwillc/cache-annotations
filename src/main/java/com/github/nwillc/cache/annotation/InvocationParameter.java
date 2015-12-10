@@ -20,8 +20,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.reflect.MethodSignature;
 
 import javax.cache.annotation.CacheInvocationParameter;
-import javax.cache.annotation.CacheKey;
-import javax.cache.annotation.CacheValue;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -31,55 +29,49 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class InvocationParameter implements CacheInvocationParameter {
-    private final int parameterPosition;
-    private final Class<?> rawType;
-    private final Object value;
-    private final Set<Annotation> annotations;
+	private final int parameterPosition;
+	private final Class<?> rawType;
+	private final Object value;
+	private final Set<Annotation> annotations;
 
-    private InvocationParameter(int parameterPosition, Class<?> rawType, Object value, Set<Annotation> annotations) {
-        this.parameterPosition = parameterPosition;
-        this.rawType = rawType;
-        this.value = value;
-        this.annotations = annotations;
-    }
+	private InvocationParameter(int parameterPosition, Class<?> rawType, Object value, Set<Annotation> annotations) {
+		this.parameterPosition = parameterPosition;
+		this.rawType = rawType;
+		this.value = value;
+		this.annotations = annotations;
+	}
 
-    @Override
-    public Class<?> getRawType() {
-        return rawType;
-    }
+	@Override
+	public Class<?> getRawType() {
+		return rawType;
+	}
 
-    @Override
-    public Object getValue() {
-        return value;
-    }
+	@Override
+	public Object getValue() {
+		return value;
+	}
 
-    @Override
-    public Set<Annotation> getAnnotations() {
-        return annotations;
-    }
+	@Override
+	public Set<Annotation> getAnnotations() {
+		return annotations;
+	}
 
-    @Override
-    public int getParameterPosition() {
-        return parameterPosition;
-    }
+	@Override
+	public int getParameterPosition() {
+		return parameterPosition;
+	}
 
-    public static InvocationParameter[] getParameters(ProceedingJoinPoint pjp) throws ClassNotFoundException {
-        Method method = ((MethodSignature)pjp.getSignature()).getMethod();
-        List<InvocationParameter> parameters = new ArrayList<>();
+	public static InvocationParameter[] getParameters(ProceedingJoinPoint pjp) throws ClassNotFoundException {
+		Method method = ((MethodSignature) pjp.getSignature()).getMethod();
+		List<InvocationParameter> parameters = new ArrayList<>();
 
-        for (int i = 0; i < method.getParameterCount(); i++) {
-            Annotation[] annotations = method.getParameterAnnotations()[i];
-            for (Annotation annotation : annotations) {
-                if (annotation instanceof CacheKey || annotation instanceof CacheValue) {
-                    parameters.add(new InvocationParameter(i,
-                            method.getParameterTypes()[i],
-                            pjp.getArgs()[i],
-                            Arrays.stream(annotations).collect(Collectors.toSet())));
-                    break;
-                }
-            }
-        }
-        InvocationParameter[] pArray = new InvocationParameter[parameters.size()];
-        return parameters.toArray(pArray);
-    }
+		for (int i = 0; i < method.getParameterCount(); i++) {
+			parameters.add(new InvocationParameter(i,
+					method.getParameterTypes()[i],
+					pjp.getArgs()[i],
+					Arrays.stream(method.getParameterAnnotations()[i]).collect(Collectors.toSet())));
+		}
+		InvocationParameter[] pArray = new InvocationParameter[parameters.size()];
+		return parameters.toArray(pArray);
+	}
 }

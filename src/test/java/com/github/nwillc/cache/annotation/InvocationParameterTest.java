@@ -45,7 +45,7 @@ public class InvocationParameterTest {
 
         InvocationParameter[] invocationParameters = InvocationParameter.getParameters(pjp);
         assertThat(invocationParameters).isNotNull();
-        assertThat(invocationParameters).hasSize(2);
+        assertThat(invocationParameters).hasSize(3);
     }
 
     public static class Simple<P extends String> {
