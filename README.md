@@ -5,7 +5,7 @@ work for any JSR 107 compliant implementation, however I've only tested them wit
 
 A general note, adding caching without these annotations is pretty straight forward. These annotations, by there very
 nature introduce overhead. Every affected method call requires a certain about of runtime investigation employing
-reflection.  Usually caching is added for speed, so I'm not clear on the logic of avoidig some pretty straight forward
+reflection.  Usually caching is added for speed, so I'm not clear on the logic of avoiding some pretty straight forward
 code at the cost of continuous overhead.
 
 -----
