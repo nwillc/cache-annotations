@@ -19,37 +19,34 @@ package com.github.nwillc.cache.annotation;
 import javax.cache.Cache;
 import javax.cache.annotation.CacheResolver;
 import javax.cache.annotation.CacheResolverFactory;
+import javax.cache.annotation.GeneratedCacheKey;
 import java.lang.annotation.Annotation;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class CacheRegistry {
-    private final Map<Annotation, Cache<Object, Object>> registry = new ConcurrentHashMap<>();
+    private final Map<Annotation, Cache<GeneratedCacheKey, Object>> registry = new ConcurrentHashMap<>();
 
     public static CacheRegistry getInstance() {
         return Instance.instance;
     }
 
-    public Cache<Object, Object> get(Annotation key) {
-        Cache<Object, Object> cache = registry.get(key);
+    public Cache<GeneratedCacheKey, Object> get(Annotation key) {
+        Cache<GeneratedCacheKey, Object> cache = registry.get(key);
         if (cache != null && cache.isClosed()) {
             cache = null;
         }
         return cache;
     }
 
-    public Cache<Object, Object> register(Annotation key,
-                                          InvocationContext<? extends Annotation> invocationContext, CacheAnnotationType cat)
+    public Cache<GeneratedCacheKey, Object> register(Annotation key,
+                                          InvocationContext<? extends Annotation> invocationContext, AnnotationType cat)
             throws InstantiationException, IllegalAccessException {
         CacheResolverFactory cacheResolverFactory = cat.cacheResolverFactory(key, invocationContext.getTarget()).newInstance();
         CacheResolver cacheResolver = cacheResolverFactory.getCacheResolver(invocationContext);
-        Cache<Object, Object> cache = cacheResolver.resolveCache(invocationContext);
+        Cache<GeneratedCacheKey, Object> cache = cacheResolver.resolveCache(invocationContext);
         registry.put(key, cache);
         return cache;
-    }
-
-    public void put(Annotation key, Cache<Object, Object> cache) {
-        registry.put(key, cache);
     }
 
     private static class Instance {

@@ -16,35 +16,38 @@
 
 package com.github.nwillc.cache.annotation;
 
-import org.aspectj.lang.ProceedingJoinPoint;
-
-import javax.cache.annotation.CacheInvocationContext;
 import javax.cache.annotation.CacheInvocationParameter;
-import java.lang.annotation.Annotation;
+import javax.cache.annotation.GeneratedCacheKey;
+import java.util.Arrays;
 
-public class InvocationContext<A extends Annotation>
-        extends MethodDetails<A> implements CacheInvocationContext<A> {
-    private final Object target;
-    private final CacheInvocationParameter[] allParameters;
+public class GeneratedKey implements GeneratedCacheKey {
+    private final Object[] keyParts;
 
-    public InvocationContext(ProceedingJoinPoint pjp, A cacheAnnotation, AnnotationType cat) throws ClassNotFoundException {
-        super(pjp, cacheAnnotation, cat);
-        this.allParameters = InvocationParameter.getParameters(pjp);
-        this.target = pjp.getTarget();
+    public GeneratedKey(CacheInvocationParameter[] keyParameters) {
+        keyParts = new Object[keyParameters.length];
+        for (int i = 0; i < keyParameters.length; i++) {
+            keyParts[i] = keyParameters[i].getValue();
+        }
+    }
+
+    public GeneratedKey(Object ... parts) {
+        keyParts = Arrays.copyOf(parts, parts.length);
     }
 
     @Override
-    public Object getTarget() {
-        return target;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        GeneratedKey that = (GeneratedKey) o;
+
+        // Probably incorrect - comparing Object[] arrays with Arrays.equals
+        return Arrays.equals(keyParts, that.keyParts);
+
     }
 
     @Override
-    public CacheInvocationParameter[] getAllParameters() {
-        return allParameters;
-    }
-
-    @Override
-    public <T> T unwrap(Class<T> cls) {
-        return null;
+    public int hashCode() {
+        return Arrays.hashCode(keyParts);
     }
 }

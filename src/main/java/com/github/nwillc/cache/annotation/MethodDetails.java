@@ -31,14 +31,14 @@ public class MethodDetails<A extends Annotation> implements CacheMethodDetails<A
     private final Set<Annotation> annotations;
     private final A cacheAnnotation;
     private final String cacheName;
-    private final CacheAnnotationType cacheAnnotationType;
+    private final AnnotationType annotationType;
 
-    public MethodDetails(ProceedingJoinPoint joinPoint, A cacheAnnotation, CacheAnnotationType cat) {
+    public MethodDetails(ProceedingJoinPoint joinPoint, A cacheAnnotation, AnnotationType cat) {
         method = ((MethodSignature) joinPoint.getSignature()).getMethod();
         this.annotations = Arrays.stream(method.getDeclaredAnnotations()).collect(Collectors.toSet());
         this.cacheAnnotation = cacheAnnotation;
         this.cacheName = cat.cacheName(cacheAnnotation, joinPoint.getTarget());
-        this.cacheAnnotationType = cat;
+        this.annotationType = cat;
     }
 
     @Override
@@ -61,7 +61,7 @@ public class MethodDetails<A extends Annotation> implements CacheMethodDetails<A
         return cacheName;
     }
 
-    protected CacheAnnotationType getCacheAnnotationType() {
-        return cacheAnnotationType;
+    protected AnnotationType getAnnotationType() {
+        return annotationType;
     }
 }

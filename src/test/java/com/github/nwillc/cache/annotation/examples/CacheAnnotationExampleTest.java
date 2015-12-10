@@ -16,6 +16,7 @@
 
 package com.github.nwillc.cache.annotation.examples;
 
+import com.github.nwillc.cache.annotation.GeneratedKey;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +29,7 @@ import javax.cache.configuration.MutableConfiguration;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CacheAnnotationExampleTest {
-    protected Cache<Long, String> cache;
+    protected Cache<GeneratedKey, String> cache;
     private CacheAnnotationExample<Long, String> cacheAnnotationExample;
 
     @Before
@@ -53,7 +54,8 @@ public class CacheAnnotationExampleTest {
         cacheAnnotationExample.put(1L, "foo");
         assertThat(cacheAnnotationExample.getMap().get(1L)).isEqualTo("foo");
         assertThat(cache).hasSize(1);
-        assertThat(cache.get(1L)).isEqualTo("foo");
+        GeneratedKey key = new GeneratedKey(1L);
+        assertThat(cache.get(key)).isEqualTo("foo");
     }
 
     @Test

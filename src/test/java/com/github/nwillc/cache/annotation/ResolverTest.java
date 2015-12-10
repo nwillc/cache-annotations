@@ -47,7 +47,7 @@ public class ResolverTest {
         when(pjp.getSignature()).thenReturn(methodSignature);
         CachePut cachePut = mock(CachePut.class);
         when(cachePut.cacheName()).thenReturn(CACHE_NAME);
-        context = new InvocationContext<>(pjp, cachePut, CacheAnnotationType.PUT);
+        context = new InvocationContext<>(pjp, cachePut, AnnotationType.PUT);
     }
 
     @Test

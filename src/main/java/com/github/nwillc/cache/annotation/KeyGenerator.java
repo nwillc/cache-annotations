@@ -14,24 +14,16 @@
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
 
-package com.github.nwillc.cache.annotation.aspects;
+package com.github.nwillc.cache.annotation;
 
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-
-import javax.cache.Cache;
-import javax.cache.annotation.CacheRemoveAll;
+import javax.cache.annotation.CacheKeyGenerator;
+import javax.cache.annotation.CacheKeyInvocationContext;
 import javax.cache.annotation.GeneratedCacheKey;
+import java.lang.annotation.Annotation;
 
-import static com.github.nwillc.cache.annotation.AnnotationType.REMOVE_ALL;
-
-@Aspect
-public class RemoveAll extends CacheAspect {
-    @Around("execution(* *(..)) && @annotation(cacheRemoveAll)")
-    public Object get(ProceedingJoinPoint joinPoint, CacheRemoveAll cacheRemoveAll) throws Throwable {
-        Cache<GeneratedCacheKey, Object> cache = getCache(cacheRemoveAll, joinPoint, REMOVE_ALL);
-        cache.clear();
-        return joinPoint.proceed();
+public class KeyGenerator implements CacheKeyGenerator {
+    @Override
+    public GeneratedCacheKey generateCacheKey(CacheKeyInvocationContext<? extends Annotation> cacheKeyInvocationContext) {
+        return new GeneratedKey(cacheKeyInvocationContext.getKeyParameters());
     }
 }

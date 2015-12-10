@@ -31,7 +31,7 @@ public class KeyInvocationContext<A extends Annotation>
     private final CacheInvocationParameter[] keyParameters;
     private final CacheInvocationParameter valueParameter;
 
-    public KeyInvocationContext(ProceedingJoinPoint pjp, A cacheAnnotation, CacheAnnotationType cat) throws ClassNotFoundException {
+    public KeyInvocationContext(ProceedingJoinPoint pjp, A cacheAnnotation, AnnotationType cat) throws ClassNotFoundException {
         super(pjp, cacheAnnotation, cat);
         this.keyParameters = findKeyParameters();
         this.valueParameter = findValueParameter();
@@ -85,7 +85,7 @@ public class KeyInvocationContext<A extends Annotation>
     }
 
     private CacheInvocationParameter findValueParameter() {
-        if (getCacheAnnotationType() != CacheAnnotationType.PUT) {
+        if (getAnnotationType() != AnnotationType.PUT) {
             return null;
         }
 

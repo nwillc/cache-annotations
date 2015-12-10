@@ -16,19 +16,20 @@
 
 package com.github.nwillc.cache.annotation.aspects;
 
-import com.github.nwillc.cache.annotation.CacheAnnotationType;
+import com.github.nwillc.cache.annotation.AnnotationType;
 import com.github.nwillc.cache.annotation.CacheRegistry;
 import com.github.nwillc.cache.annotation.InvocationContext;
 import org.aspectj.lang.ProceedingJoinPoint;
 
 import javax.cache.Cache;
+import javax.cache.annotation.GeneratedCacheKey;
 import java.lang.annotation.Annotation;
 
 public class CacheAspect {
     private final CacheRegistry cacheRegistry = CacheRegistry.getInstance();
 
-    protected Cache<Object, Object> getCache(Annotation key, ProceedingJoinPoint pjp, CacheAnnotationType cat) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-        Cache<Object, Object> cache = cacheRegistry.get(key);
+    protected Cache<GeneratedCacheKey, Object> getCache(Annotation key, ProceedingJoinPoint pjp, AnnotationType cat) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+        Cache<GeneratedCacheKey, Object> cache = cacheRegistry.get(key);
         if (cache == null) {
             InvocationContext<? extends Annotation> invocationContext = new InvocationContext<>(pjp, key, cat);
             cache = cacheRegistry.register(key, invocationContext, cat);

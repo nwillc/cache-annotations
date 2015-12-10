@@ -26,7 +26,7 @@ import javax.cache.annotation.CacheResult;
 import java.lang.annotation.Annotation;
 import java.util.Optional;
 
-public enum CacheAnnotationType {
+public enum AnnotationType {
     PUT {
         @Override
         public String cacheName(Annotation a) {
@@ -90,7 +90,7 @@ public enum CacheAnnotationType {
         if (!cacheName.equals("")) {
             return cacheName;
         }
-        Optional<CacheDefaults> cacheDefaults = CacheAnnotationType.getCacheDefaults(target.getClass());
+        Optional<CacheDefaults> cacheDefaults = AnnotationType.getCacheDefaults(target.getClass());
         if (cacheDefaults.isPresent() && !cacheDefaults.get().cacheName().equals("")) {
             return cacheDefaults.get().cacheName();
         }
@@ -102,7 +102,7 @@ public enum CacheAnnotationType {
         if (!cacheResolverFactory.equals(CacheResolverFactory.class)) {
             return cacheResolverFactory;
         }
-        Optional<CacheDefaults> cacheDefaults = CacheAnnotationType.getCacheDefaults(target.getClass());
+        Optional<CacheDefaults> cacheDefaults = AnnotationType.getCacheDefaults(target.getClass());
         if (cacheDefaults.isPresent() && !cacheDefaults.get().cacheResolverFactory().equals(CacheResolverFactory.class)) {
             return cacheDefaults.get().cacheResolverFactory();
         }

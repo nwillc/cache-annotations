@@ -16,14 +16,17 @@
 
 package com.github.nwillc.cache.annotation.aspects;
 
+import com.github.nwillc.cache.annotation.GeneratedKey;
+import com.github.nwillc.cache.annotation.KeyInvocationContext;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 
 import javax.cache.Cache;
 import javax.cache.annotation.CachePut;
+import javax.cache.annotation.GeneratedCacheKey;
 
-import static com.github.nwillc.cache.annotation.CacheAnnotationType.PUT;
+import static com.github.nwillc.cache.annotation.AnnotationType.PUT;
 
 @Aspect
 public class Put extends CacheAspect {
@@ -31,9 +34,9 @@ public class Put extends CacheAspect {
     @Around("execution(* *(..)) && @annotation(cachePut)")
     public Object put(ProceedingJoinPoint joinPoint, CachePut cachePut) throws Throwable {
         Object result = joinPoint.proceed();
-        Cache<Object, Object> cache = getCache(cachePut, joinPoint, PUT);
-        Object[] args = joinPoint.getArgs();
-        cache.put(args[0], args[1]);
+        Cache<GeneratedCacheKey, Object> cache = getCache(cachePut, joinPoint, PUT);
+        KeyInvocationContext<CachePut> keyInvocationContext = new KeyInvocationContext<>(joinPoint, cachePut, PUT);
+        cache.put(new GeneratedKey(keyInvocationContext.getKeyParameters()), keyInvocationContext.getValueParameter().getValue());
         return result;
     }
 
