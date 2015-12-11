@@ -23,6 +23,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 
 import javax.cache.annotation.CacheRemove;
+import java.lang.annotation.Annotation;
 
 import static com.github.nwillc.cache.annotation.AnnotationType.REMOVE;
 
@@ -31,9 +32,13 @@ public class Remove extends CacheAspect {
 
     @Around("execution(* *(..)) && @annotation(cacheRemove)")
     public Object remove(ProceedingJoinPoint joinPoint, CacheRemove cacheRemove) throws Throwable {
-        ContextRegistry.Context context = getContext(cacheRemove, joinPoint, REMOVE);
-        KeyInvocationContext<CacheRemove> keyInvocationContext = new KeyInvocationContext<>(joinPoint, cacheRemove, REMOVE);
+        return around(joinPoint, cacheRemove, cacheRemove.afterInvocation());
+    }
+
+    @Override
+    protected void cacheAction(ProceedingJoinPoint joinPoint, Annotation annotation) throws Exception {
+        ContextRegistry.Context context = getContext(annotation, joinPoint, REMOVE);
+        KeyInvocationContext<Annotation> keyInvocationContext = new KeyInvocationContext<>(joinPoint, annotation, REMOVE);
         context.getCache().remove(context.getKeyGenerator().generateCacheKey(keyInvocationContext));
-        return joinPoint.proceed();
     }
 }
