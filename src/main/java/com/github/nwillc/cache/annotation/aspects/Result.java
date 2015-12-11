@@ -30,7 +30,7 @@ import static com.github.nwillc.cache.annotation.AnnotationType.RESULT;
 @Aspect
 public class Result extends CacheAspect {
     @Around("execution(* *(..)) && @annotation(cacheResult)")
-    public Object get(ProceedingJoinPoint joinPoint, CacheResult cacheResult) throws Throwable {
+    public Object result(ProceedingJoinPoint joinPoint, CacheResult cacheResult) throws Throwable {
         ContextRegistry.Context context = getContext(cacheResult, joinPoint, RESULT);
         KeyInvocationContext<CacheResult> keyInvocationContext = new KeyInvocationContext<>(joinPoint, cacheResult, RESULT);
         GeneratedCacheKey key = context.getKeyGenerator().generateCacheKey(keyInvocationContext);

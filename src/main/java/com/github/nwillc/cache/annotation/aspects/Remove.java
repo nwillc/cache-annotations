@@ -30,7 +30,7 @@ import static com.github.nwillc.cache.annotation.AnnotationType.REMOVE;
 public class Remove extends CacheAspect {
 
     @Around("execution(* *(..)) && @annotation(cacheRemove)")
-    public Object get(ProceedingJoinPoint joinPoint, CacheRemove cacheRemove) throws Throwable {
+    public Object remove(ProceedingJoinPoint joinPoint, CacheRemove cacheRemove) throws Throwable {
         ContextRegistry.Context context = getContext(cacheRemove, joinPoint, REMOVE);
         KeyInvocationContext<CacheRemove> keyInvocationContext = new KeyInvocationContext<>(joinPoint, cacheRemove, REMOVE);
         context.getCache().remove(context.getKeyGenerator().generateCacheKey(keyInvocationContext));

@@ -28,7 +28,7 @@ import static com.github.nwillc.cache.annotation.AnnotationType.REMOVE_ALL;
 @Aspect
 public class RemoveAll extends CacheAspect {
     @Around("execution(* *(..)) && @annotation(cacheRemoveAll)")
-    public Object get(ProceedingJoinPoint joinPoint, CacheRemoveAll cacheRemoveAll) throws Throwable {
+    public Object removeAll(ProceedingJoinPoint joinPoint, CacheRemoveAll cacheRemoveAll) throws Throwable {
         ContextRegistry.Context context = getContext(cacheRemoveAll, joinPoint, REMOVE_ALL);
         context.getCache().clear();
         return joinPoint.proceed();
