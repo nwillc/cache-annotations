@@ -32,4 +32,4 @@ include 'api'
 include 'services:webservice'
 */
 
-rootProject.name = 'cache-annotaions'
+rootProject.name = 'cache-annotations'

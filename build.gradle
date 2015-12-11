@@ -43,6 +43,7 @@ apply plugin: "java"
 apply plugin: "com.github.nwillc.vplugin"
 apply plugin: "release"
 apply plugin: "maven-publish"
+apply plugin: "maven"
 
 repositories {
     jcenter {
