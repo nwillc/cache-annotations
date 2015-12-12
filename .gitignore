@@ -1,4 +1,4 @@
 .gradle
 *.iml
 .idea
-build
+buildenv.sh
