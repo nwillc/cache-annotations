@@ -31,12 +31,16 @@ import static com.github.nwillc.cache.annotation.AnnotationType.RESULT;
 public class Result extends CacheAspect {
     @Around("execution(* *(..)) && @annotation(cacheResult)")
     public Object result(ProceedingJoinPoint joinPoint, CacheResult cacheResult) throws Throwable {
+        Object value;
         ContextRegistry.Context context = getContext(cacheResult, joinPoint, RESULT);
         KeyInvocationContext<CacheResult> keyInvocationContext = new KeyInvocationContext<>(joinPoint, cacheResult, RESULT);
         GeneratedCacheKey key = context.getKeyGenerator().generateCacheKey(keyInvocationContext);
-        Object value = context.getCache().get(key);
-        if (value != null) {
-            return value;
+
+        if (!cacheResult.skipGet()) {
+            value = context.getCache().get(key);
+            if (value != null) {
+                return value;
+            }
         }
         value = joinPoint.proceed();
         if (value != null) {
@@ -44,4 +48,5 @@ public class Result extends CacheAspect {
         }
         return value;
     }
+
 }

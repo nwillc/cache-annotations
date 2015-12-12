@@ -26,6 +26,20 @@ import java.lang.annotation.Annotation;
 class CacheAspect {
     private final ContextRegistry contextRegistry = ContextRegistry.getInstance();
 
+    protected Object around(ProceedingJoinPoint pjp, Annotation annotation, boolean afterInvocation) throws Throwable {
+        if (afterInvocation) {
+            Object result = pjp.proceed();
+            cacheAction(pjp, annotation);
+            return result;
+        } else {
+            cacheAction(pjp, annotation);
+            return pjp.proceed();
+        }
+    }
+
+    protected void cacheAction(ProceedingJoinPoint joinPoint, Annotation annotation) throws Exception {
+    }
+
     ContextRegistry.Context getContext(Annotation key, ProceedingJoinPoint pjp, AnnotationType cat) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         ContextRegistry.Context context = contextRegistry.getContext(key);
         if (context == null) {
