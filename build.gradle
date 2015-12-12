@@ -29,8 +29,9 @@ buildscript {
     dependencies {
         classpath "gradle.plugin.com.github.nwillc:vplugin:1.2.4",
                 "nl.eveoh:gradle-aspectj:1.6",
-                "au.com.ish.gradle:release:2.2.2",
-                "org.tmatesoft.sqljet:sqljet:1.1.9"
+                "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.4",
+                'au.com.ish.gradle:release:2.2.2',
+                'org.tmatesoft.sqljet:sqljet:1.1.9'
     }
 }
 
@@ -43,6 +44,7 @@ apply plugin: "java"
 apply plugin: "com.github.nwillc.vplugin"
 apply plugin: "release"
 apply plugin: "maven-publish"
+apply plugin: "com.jfrog.bintray"
 
 repositories {
     jcenter {
@@ -119,3 +121,23 @@ release {
     scm = "git"
 }
 
+
+bintray {
+    user = System.getenv('BINTRAY_USER')
+    key = System.getenv('BINTRAY_API_KEY')
+
+    dryRun = false
+    publish = true
+    publications = ['mavenJava']
+    pkg {
+        repo = 'maven'
+        name = project.name
+        desc = 'JSR 107 caching annotations'
+        websiteUrl = 'https://github.com/nwillc/cache-annotations'
+        issueTrackerUrl = 'https://github.com/nwillc/cache-annotations/issues'
+        vcsUrl = 'https://github.com/nwillc/cache-annotations.git'
+        licenses = ['ISC']
+        labels = ['cach-annotations']
+        publicDownloadNumbers = true
+    }
+}
