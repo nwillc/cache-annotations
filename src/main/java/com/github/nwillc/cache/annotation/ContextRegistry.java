@@ -26,25 +26,26 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public final class ContextRegistry {
-    private final Map<Annotation, Context> registry = new ConcurrentHashMap<>();
+    private final Map<GeneratedCacheKey, Context> registry = new ConcurrentHashMap<>();
 
     public static ContextRegistry getInstance() {
         return Instance.instance;
     }
 
-    public Context getContext(Annotation key) {
-        return registry.get(key);
+    public Context getContext(Annotation annotation, Object target) {
+        return registry.get(new GeneratedKey(annotation, target));
     }
 
-    public Context register(Annotation key,
-                                          InvocationContext<? extends Annotation> invocationContext, AnnotationType cat)
+    public Context register(Annotation annotation,
+                            InvocationContext<? extends Annotation> invocationContext, AnnotationType cat)
             throws InstantiationException, IllegalAccessException {
-        CacheResolverFactory cacheResolverFactory = cat.cacheResolverFactory(key, invocationContext.getTarget()).newInstance();
+        CacheResolverFactory cacheResolverFactory = cat.cacheResolverFactory(annotation, invocationContext.getTarget()).newInstance();
         CacheResolver cacheResolver = cacheResolverFactory.getCacheResolver(invocationContext);
         Cache<GeneratedCacheKey, Object> cache = cacheResolver.resolveCache(invocationContext);
-        Class<? extends CacheKeyGenerator> aClass = cat.cacheKeyGenerator(key, invocationContext.getTarget());
+        Class<? extends CacheKeyGenerator> aClass = cat.cacheKeyGenerator(annotation, invocationContext.getTarget());
         CacheKeyGenerator generator = aClass == null ? null : aClass.newInstance();
         Context context = new Context(cache,generator);
+        GeneratedCacheKey key = new GeneratedKey(annotation, invocationContext.getTarget());
         registry.put(key, context);
         return context;
     }

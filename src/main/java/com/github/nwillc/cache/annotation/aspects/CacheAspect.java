@@ -40,11 +40,11 @@ class CacheAspect {
     protected void cacheAction(ProceedingJoinPoint joinPoint, Annotation annotation) throws Exception {
     }
 
-    ContextRegistry.Context getContext(Annotation key, ProceedingJoinPoint pjp, AnnotationType cat) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
-        ContextRegistry.Context context = contextRegistry.getContext(key);
+    ContextRegistry.Context getContext(Annotation annotation, ProceedingJoinPoint pjp, AnnotationType cat) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
+        ContextRegistry.Context context = contextRegistry.getContext(annotation, pjp.getTarget());
         if (context == null) {
-            InvocationContext<? extends Annotation> invocationContext = new InvocationContext<>(pjp, key, cat);
-            context = contextRegistry.register(key, invocationContext, cat);
+            InvocationContext<? extends Annotation> invocationContext = new InvocationContext<>(pjp, annotation, cat);
+            context = contextRegistry.register(annotation, invocationContext, cat);
         }
         return context;
     }
