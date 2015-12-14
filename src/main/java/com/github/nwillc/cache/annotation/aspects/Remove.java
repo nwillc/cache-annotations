@@ -17,12 +17,12 @@
 package com.github.nwillc.cache.annotation.aspects;
 
 import com.github.nwillc.cache.annotation.ContextRegistry;
-import com.github.nwillc.cache.annotation.KeyInvocationContext;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 
 import javax.cache.annotation.CacheRemove;
+import javax.cache.annotation.GeneratedCacheKey;
 import java.lang.annotation.Annotation;
 
 import static com.github.nwillc.cache.annotation.AnnotationType.REMOVE;
@@ -36,9 +36,9 @@ public class Remove extends CacheAspect {
     }
 
     @Override
-    protected void cacheAction(ProceedingJoinPoint joinPoint, Annotation annotation) throws Exception {
-        ContextRegistry.Context context = getContext(annotation, joinPoint, REMOVE);
-        KeyInvocationContext<Annotation> keyInvocationContext = new KeyInvocationContext<>(joinPoint, annotation, REMOVE);
-        context.getCache().remove(context.getKeyGenerator().generateCacheKey(keyInvocationContext));
+    protected void cacheAction(ProceedingJoinPoint pjp, Annotation annotation) throws Exception {
+        ContextRegistry.Context context = getContext(annotation, pjp, REMOVE);
+        GeneratedCacheKey key = generateKey(pjp, context);
+        context.getCache().remove(key);
     }
 }

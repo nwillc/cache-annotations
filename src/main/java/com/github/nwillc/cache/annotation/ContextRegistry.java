@@ -18,6 +18,7 @@ package com.github.nwillc.cache.annotation;
 
 import javax.cache.Cache;
 import javax.cache.annotation.CacheKeyGenerator;
+import javax.cache.annotation.CacheKeyInvocationContext;
 import javax.cache.annotation.CacheResolver;
 import javax.cache.annotation.CacheResolverFactory;
 import javax.cache.annotation.GeneratedCacheKey;
@@ -37,15 +38,16 @@ public final class ContextRegistry {
     }
 
     public Context register(Annotation annotation,
-                            InvocationContext<? extends Annotation> invocationContext, AnnotationType cat)
+                            CacheKeyInvocationContext<? extends Annotation> keyInvocationContext,
+                            AnnotationType cat)
             throws InstantiationException, IllegalAccessException {
-        CacheResolverFactory cacheResolverFactory = cat.cacheResolverFactory(annotation, invocationContext.getTarget()).newInstance();
-        CacheResolver cacheResolver = cacheResolverFactory.getCacheResolver(invocationContext);
-        Cache<GeneratedCacheKey, Object> cache = cacheResolver.resolveCache(invocationContext);
-        Class<? extends CacheKeyGenerator> aClass = cat.cacheKeyGenerator(annotation, invocationContext.getTarget());
+        CacheResolverFactory cacheResolverFactory = cat.cacheResolverFactory(annotation, keyInvocationContext.getTarget()).newInstance();
+        CacheResolver cacheResolver = cacheResolverFactory.getCacheResolver(keyInvocationContext);
+        Cache<GeneratedCacheKey, Object> cache = cacheResolver.resolveCache(keyInvocationContext);
+        Class<? extends CacheKeyGenerator> aClass = cat.cacheKeyGenerator(annotation, keyInvocationContext.getTarget());
         CacheKeyGenerator generator = aClass == null ? null : aClass.newInstance();
-        Context context = new Context(cache,generator);
-        GeneratedCacheKey key = new GeneratedKey(annotation, invocationContext.getTarget());
+        Context context = new Context(cache,generator, keyInvocationContext);
+        GeneratedCacheKey key = new GeneratedKey(annotation, keyInvocationContext.getTarget());
         registry.put(key, context);
         return context;
     }
@@ -57,10 +59,13 @@ public final class ContextRegistry {
     public static class Context {
         private final Cache<GeneratedCacheKey, Object> cache;
         private final CacheKeyGenerator keyGenerator;
+        private final CacheKeyInvocationContext<? extends Annotation> keyInvocationContext;
 
-        public Context(Cache<GeneratedCacheKey, Object> cache, CacheKeyGenerator keyGenerator) {
+        public Context(Cache<GeneratedCacheKey, Object> cache, CacheKeyGenerator keyGenerator,
+                       CacheKeyInvocationContext<? extends Annotation> keyInvocationContext) {
             this.cache = cache;
             this.keyGenerator = keyGenerator;
+            this.keyInvocationContext = keyInvocationContext;
         }
 
         public Cache<GeneratedCacheKey, Object> getCache() {
@@ -69,6 +74,10 @@ public final class ContextRegistry {
 
         public CacheKeyGenerator getKeyGenerator() {
             return keyGenerator;
+        }
+
+        public CacheKeyInvocationContext<? extends Annotation> getKeyInvocationContext() {
+            return keyInvocationContext;
         }
     }
 }

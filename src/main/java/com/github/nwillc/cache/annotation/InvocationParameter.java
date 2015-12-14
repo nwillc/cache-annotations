@@ -31,8 +31,8 @@ import java.util.stream.Collectors;
 public class InvocationParameter implements CacheInvocationParameter {
     private final int parameterPosition;
     private final Class<?> rawType;
-    private final Object value;
     private final Set<Annotation> annotations;
+    private Object value;
 
     private InvocationParameter(int parameterPosition, Class<?> rawType, Object value, Set<Annotation> annotations) {
         this.parameterPosition = parameterPosition;
@@ -55,6 +55,14 @@ public class InvocationParameter implements CacheInvocationParameter {
         return parameters.toArray(pArray);
     }
 
+    public static <P extends CacheInvocationParameter> void updateValues(ProceedingJoinPoint pjp, P[] parameters) {
+        for (P invocationParameter : parameters) {
+            if (invocationParameter instanceof InvocationParameter) {
+                ((InvocationParameter) invocationParameter).setValue(pjp.getArgs()[invocationParameter.getParameterPosition()]);
+            }
+        }
+    }
+
     @Override
     public Class<?> getRawType() {
         return rawType;
@@ -63,6 +71,10 @@ public class InvocationParameter implements CacheInvocationParameter {
     @Override
     public Object getValue() {
         return value;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
     }
 
     @Override

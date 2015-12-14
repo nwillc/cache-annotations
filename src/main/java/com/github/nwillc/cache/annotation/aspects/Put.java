@@ -17,7 +17,6 @@
 package com.github.nwillc.cache.annotation.aspects;
 
 import com.github.nwillc.cache.annotation.ContextRegistry;
-import com.github.nwillc.cache.annotation.KeyInvocationContext;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -37,10 +36,9 @@ public class Put extends CacheAspect {
     }
 
     @Override
-    protected void cacheAction(ProceedingJoinPoint joinPoint, Annotation annotation) throws Exception {
-        ContextRegistry.Context context = getContext(annotation, joinPoint, PUT);
-        KeyInvocationContext<Annotation> keyInvocationContext = new KeyInvocationContext<>(joinPoint, annotation, PUT);
-        GeneratedCacheKey key = context.getKeyGenerator().generateCacheKey(keyInvocationContext);
-        context.getCache().put(key, keyInvocationContext.getValueParameter().getValue());
+    protected void cacheAction(ProceedingJoinPoint pjp, Annotation annotation) throws Exception {
+        ContextRegistry.Context context = getContext(annotation, pjp, PUT);
+        GeneratedCacheKey key = generateKey(pjp, context);
+        context.getCache().put(key, context.getKeyInvocationContext().getValueParameter().getValue());
     }
 }

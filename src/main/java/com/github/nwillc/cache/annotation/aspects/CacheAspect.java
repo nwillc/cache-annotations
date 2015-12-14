@@ -18,10 +18,14 @@ package com.github.nwillc.cache.annotation.aspects;
 
 import com.github.nwillc.cache.annotation.AnnotationType;
 import com.github.nwillc.cache.annotation.ContextRegistry;
-import com.github.nwillc.cache.annotation.InvocationContext;
+import com.github.nwillc.cache.annotation.KeyInvocationContext;
 import org.aspectj.lang.ProceedingJoinPoint;
 
+import javax.cache.annotation.CacheKeyInvocationContext;
+import javax.cache.annotation.GeneratedCacheKey;
 import java.lang.annotation.Annotation;
+
+import static com.github.nwillc.cache.annotation.InvocationParameter.updateValues;
 
 class CacheAspect {
     private final ContextRegistry contextRegistry = ContextRegistry.getInstance();
@@ -40,10 +44,17 @@ class CacheAspect {
     protected void cacheAction(ProceedingJoinPoint joinPoint, Annotation annotation) throws Exception {
     }
 
+    protected GeneratedCacheKey generateKey(ProceedingJoinPoint pjp, ContextRegistry.Context context) {
+        synchronized (context.getKeyInvocationContext()) {
+            updateValues(pjp, context.getKeyInvocationContext().getAllParameters());
+            return context.getKeyGenerator().generateCacheKey(context.getKeyInvocationContext());
+        }
+    }
+
     ContextRegistry.Context getContext(Annotation annotation, ProceedingJoinPoint pjp, AnnotationType cat) throws IllegalAccessException, InstantiationException, ClassNotFoundException {
         ContextRegistry.Context context = contextRegistry.getContext(annotation, pjp.getTarget());
         if (context == null) {
-            InvocationContext<? extends Annotation> invocationContext = new InvocationContext<>(pjp, annotation, cat);
+            CacheKeyInvocationContext<? extends Annotation> invocationContext = new KeyInvocationContext<>(pjp, annotation, cat);
             context = contextRegistry.register(annotation, invocationContext, cat);
         }
         return context;

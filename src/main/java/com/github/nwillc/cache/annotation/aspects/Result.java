@@ -17,7 +17,6 @@
 package com.github.nwillc.cache.annotation.aspects;
 
 import com.github.nwillc.cache.annotation.ContextRegistry;
-import com.github.nwillc.cache.annotation.KeyInvocationContext;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -30,11 +29,10 @@ import static com.github.nwillc.cache.annotation.AnnotationType.RESULT;
 @Aspect
 public class Result extends CacheAspect {
     @Around("execution(* *(..)) && @annotation(cacheResult)")
-    public Object result(ProceedingJoinPoint joinPoint, CacheResult cacheResult) throws Throwable {
+    public Object result(ProceedingJoinPoint pjp, CacheResult cacheResult) throws Throwable {
         Object value;
-        ContextRegistry.Context context = getContext(cacheResult, joinPoint, RESULT);
-        KeyInvocationContext<CacheResult> keyInvocationContext = new KeyInvocationContext<>(joinPoint, cacheResult, RESULT);
-        GeneratedCacheKey key = context.getKeyGenerator().generateCacheKey(keyInvocationContext);
+        ContextRegistry.Context context = getContext(cacheResult, pjp, RESULT);
+        GeneratedCacheKey key = generateKey(pjp, context);
 
         if (!cacheResult.skipGet()) {
             value = context.getCache().get(key);
@@ -42,7 +40,7 @@ public class Result extends CacheAspect {
                 return value;
             }
         }
-        value = joinPoint.proceed();
+        value = pjp.proceed();
         if (value != null) {
             context.getCache().put(key, value);
         }
