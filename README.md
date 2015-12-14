@@ -12,4 +12,4 @@ code at the cost of continuous overhead.
 -----
 [![ISC License](http://shields-nwillc.rhcloud.com/shield/tldrlegal?package=ISC)](http://shields-nwillc.rhcloud.com/homepage/tldrlegal?package=ISC)
 [![Build Status](http://shields-nwillc.rhcloud.com/shield/travis-ci?path=nwillc&package=cache-annotations)](http://shields-nwillc.rhcloud.com/homepage/travis-ci?path=nwillc&package=cache-annotations)
-
+[![Download](http://shields-nwillc.rhcloud.com/shield/jcenter?path=nwillc&package=cache-annotations)](http://shields-nwillc.rhcloud.com/homepage/jcenter?group=com.github.nwillc&package=cache-annotations&path=nwillc/maven/cache-annotations)
