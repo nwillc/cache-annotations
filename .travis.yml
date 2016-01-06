@@ -3,3 +3,5 @@ jdk:
   - oraclejdk8
 env:
   - TERM=dumb
+after_success:
+- "./gradlew clean jar bintray -x test"
